@@ -4,6 +4,7 @@ module.exports = function (app, Product) {
         Product.find((err, products) => {
             if (err) return res.status(500).send({ error: err });
             res.json(products);
+            res.end();
         });
     });
 
@@ -13,6 +14,7 @@ module.exports = function (app, Product) {
             if(err) return res.status(500).json({ error: err });
             if(!product) return res.status(404).json({ error: "product not found" });
             res.json(product);
+            res.end();
         });
     });
 
@@ -24,7 +26,7 @@ module.exports = function (app, Product) {
             expiration_date: req.body.expiration_date,
             status: "active"
         });
-        console.log("---processing...---");
+        
         product.save((err) => {
             if (err) {
                 console.log(err);
@@ -32,6 +34,7 @@ module.exports = function (app, Product) {
                 return;
             }
             res.json(product);
+            res.end();
         });
     });
 
@@ -46,17 +49,19 @@ module.exports = function (app, Product) {
             if(req.body.expiration_date) product.expiration_date = req.body.expiration_date;
             if(req.body.status) product.status = req.body.status;
         
-            Product.save((err) => {
+            product.save((err) => {
                 if (err) res.status(500).json({ error: "failed to update" });
                 res.json({ message: "product updated" });
+                res.end();
             });
         });
     });
 
     // DELETE PRODUCT
     app.delete('/products/:product_id', (req, res) => {
-        Product.deleteOne({ _id: req.params.product_id }, function () {
+        Product.deleteOne({ _id: req.params.product_id }, function (err) {
             if (err) return res.status(500).json({ error: "database failure " });
+            res.json({ message: "product deleted" });
             res.status(204).end();
         });
     });
