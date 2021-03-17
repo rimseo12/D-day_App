@@ -27,7 +27,4 @@ const router = require('./routes')(app, Product);
 const cors = require('cors');
 app.use(cors()); //브라우저 cors 허용
 
-app.get('/', function(req, res) {
-    res.send('Good Moring');
-});
 
