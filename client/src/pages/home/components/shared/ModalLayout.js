@@ -9,7 +9,7 @@ import moment from 'moment'
 import axios from 'axios'
 
 
-const CreateForm = ({ visible, onCreate, onCancel }) => {
+const CreateForm = ({ product_id, visible, onCreate, onCancel }) => {
     const [form] = Form.useForm()
     const dateFormat = 'YYYY/MM/DD'
     const fileUpload = {
@@ -30,6 +30,59 @@ const CreateForm = ({ visible, onCreate, onCancel }) => {
         },
       }
 
+    if(product_id){
+      return(
+        <Modal
+        visible={visible}
+        title="Modify"
+        //okText="Create"
+        cancelText="Cancel"
+        onCancel={onCancel}
+        onOk={() => {
+          form
+            .validateFields()
+            .then((values) => {
+              form.resetFields()
+              onCreate(values)
+            })
+            .catch((info) => {
+              console.log('Validate Failed:', info);
+            });
+        }}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          name="form_in_modal"
+          initialValues={{
+            modifier: 'public',
+          }}
+        >
+          <Form.Item
+            name="name"
+            label="name"
+            rules={[
+              {
+                required: true,
+                message: '상품명을 등록해주세요!',
+              },
+            ]}
+          >
+            <Input type="text" defaultValue={product_id}/>
+          </Form.Item>
+          <Form.Item name="image_url" label="image_url">
+            <Upload {...fileUpload}>
+               <Button icon={<UploadOutlined />}>Click to Upload</Button>
+            </Upload>
+          </Form.Item>
+          <Form.Item name="expiration_date" label="expiration_date">
+               <DatePicker defaultValue={moment('2021/03/16', dateFormat)} format={dateFormat} />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      )
+    } else {
     return (
       <Modal
         visible={visible}
@@ -79,10 +132,11 @@ const CreateForm = ({ visible, onCreate, onCancel }) => {
           </Form.Item>
         </Form>
       </Modal>
-    );
-  };
+    )
+  }
+}
   
-  const ExampleModal = () => {
+  const ExampleModal = (props) => {
     const [visible, setVisible] = useState(false)
   
     const onCreate = async(values) => {
@@ -90,35 +144,53 @@ const CreateForm = ({ visible, onCreate, onCancel }) => {
           name: values.name,
           expiration_date: moment.utc(values.expiration_date)
       })
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      })
+      
       console.log('Received values of form: ', values)
       setVisible(false)
     }
+    if(props.product_id) {
+      return(
+        <div>
+          <Button
+            type="primary"
+            onClick={() =>{
+              setVisible(true)
+            }}
+          >
+            Modify
+          </Button>
+          <CreateForm
+            product_id={props.product_id}
+            visible={visible}
+            onCancel={() => {
+              setVisible(false)
+            }}
+          />
+        </div>
+      )
+    } else {
+      return (
+        <div>
   
-    return (
-      <div>
-        <Button
-          type="primary"
-          onClick={() => {
-            setVisible(true)
-          }}
-        >
-          New Collection
-        </Button>
-        <CreateForm
-          visible={visible}
-          onCreate={onCreate}
-          onCancel={() => {
-            setVisible(false)
-          }}
-        />
-      </div>
-    );
-  };
+          <Button
+            type="primary"
+            onClick={() => {
+              setVisible(true)
+            }}
+          >
+            Add Product
+          </Button>
+          <CreateForm
+            visible={visible}
+            onCreate={onCreate}
+            onCancel={() => {
+              setVisible(false)
+            }}
+          />
+        </div>
+      )
+    }
+   
+  }
 
 export default ExampleModal
