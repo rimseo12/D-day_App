@@ -1,35 +1,26 @@
 module.exports = function (app, Product) {
-    const multer = require('multer');
-    const upload = multer({
-        dest: 'uploads/'
+    const multer = require("multer");
+  const storage = multer.diskStorage({
+    destination: "./public/uploads/",
+    filename: function (req, file, cb) {
+      const fileName = file.originalname.toLowerCase().split(" ").join("-");
+      cb(null, Date.now() + "-" + fileName);
+    },
+  });
+  const upload = multer({
+    storage: storage,
+    limits: { fileSize: 1000000 },
+  }).single("myImage");
+
+   app.post("/upload", (req, res) => {
+    upload(req, res, (err) => {
+      if (err) {
+        console.log(error);
+        res.status(500).end();
+      }
+      console.log(req.file);
+      res.send(fileName);
     });
-
-    const util = {  //json response 형식
-        success: (status, message, data) => {
-            return {
-                status: status,
-                success: true,
-                message: message,
-                data: data
-            }
-        },
-        fail: (status, message) => {
-            return {
-                status: status,
-                success: false,
-                message: message
-            }
-        }
-    }
-
-
-    app.post('/upload', upload.single('image'),  async (req, res) => {
-        const image = req.file.path;
-        console.log(req.file);
-        if (image === undefined) {
-            return res.status(400).send(util.fail(400, "이미지가 존재하지않음"))
-        }
-        res.status(200).send(util.success(200, "요청 성공", image));
     });
 
     // GET ALL PRODUCTS
