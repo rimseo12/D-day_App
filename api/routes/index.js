@@ -1,4 +1,37 @@
 module.exports = function (app, Product) {
+    const multer = require('multer');
+    const upload = multer({
+        dest: 'uploads/'
+    });
+
+    const util = {  //json response 형식
+        success: (status, message, data) => {
+            return {
+                status: status,
+                success: true,
+                message: message,
+                data: data
+            }
+        },
+        fail: (status, message) => {
+            return {
+                status: status,
+                success: false,
+                message: message
+            }
+        }
+    }
+
+
+    app.post('/upload', upload.single('image'),  async (req, res) => {
+        const image = req.file.path;
+        console.log(req.file);
+        if (image === undefined) {
+            return res.status(400).send(util.fail(400, "이미지가 존재하지않음"))
+        }
+        res.status(200).send(util.success(200, "요청 성공", image));
+    });
+
     // GET ALL PRODUCTS
     app.get('/products', (req, res) => {
         Product.find((err, products) => {
@@ -10,9 +43,9 @@ module.exports = function (app, Product) {
 
     // GET SINGLE PRODUCT
     app.get('/products/:product_id', (req, res) => {
-        Product.findOne(({_id: req.params.product_id}), (err, product) => {
-            if(err) return res.status(500).json({ error: err });
-            if(!product) return res.status(404).json({ error: "product not found" });
+        Product.findOne(({ _id: req.params.product_id }), (err, product) => {
+            if (err) return res.status(500).json({ error: err });
+            if (!product) return res.status(404).json({ error: "product not found" });
             res.json(product);
             res.end();
         });
@@ -26,7 +59,7 @@ module.exports = function (app, Product) {
             expiration_date: req.body.expiration_date,
             status: "active"
         });
-        
+
         product.save((err) => {
             if (err) {
                 console.log(err);
@@ -40,15 +73,15 @@ module.exports = function (app, Product) {
 
     // UPDATE PRODUCT
     app.put('/products/:product_id', (req, res) => {
-        Product.findById(req.params.product_id, function(err, product) {
-            if(err) return res.status(500).json({ error: "database failure"});
-            if(!product) return res.status(404).json({ error: "Product not found"});
+        Product.findById(req.params.product_id, function (err, product) {
+            if (err) return res.status(500).json({ error: "database failure" });
+            if (!product) return res.status(404).json({ error: "Product not found" });
 
-            if(req.body.name) product.name = req.body.name;
-            if(req.body.image_url) product.image_url = req.body.image_url;
-            if(req.body.expiration_date) product.expiration_date = req.body.expiration_date;
-            if(req.body.status) product.status = req.body.status;
-        
+            if (req.body.name) product.name = req.body.name;
+            if (req.body.image_url) product.image_url = req.body.image_url;
+            if (req.body.expiration_date) product.expiration_date = req.body.expiration_date;
+            if (req.body.status) product.status = req.body.status;
+
             product.save((err) => {
                 if (err) res.status(500).json({ error: "failed to update" });
                 res.json({ message: "product updated" });

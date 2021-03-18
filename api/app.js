@@ -24,6 +24,7 @@ mongoose
 
 const Product = require('./models/products');
 const router = require('./routes')(app, Product);
+
 const cors = require('cors');
 app.use(cors()); //브라우저 cors 허용
 
