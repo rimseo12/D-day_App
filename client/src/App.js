@@ -1,7 +1,11 @@
 import './App.css'
 import React, { Fragment, useState } from 'react'
+import { Route, Switch } from 'react-router-dom'
 import { Button } from 'antd'
 import axios from 'axios'
+import Home from './pages/home/components/Home'
+import Trash from './pages/sub/components/TrashList'
+import LeftMenu from './pages/menu/LeftMenu'
 import ExampleModal from './pages/home/components/shared/ModalLayout'
 import ProductList from './pages/home/components/shared/ProductList'
 import { ConsoleSqlOutlined } from '@ant-design/icons'
@@ -48,8 +52,15 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
+        <LeftMenu/>
+        <Switch>
+          <Route exact path="/" component={Home}/>
+          <Route exact path="/trash" component={Trash}/>
+        </Switch>
+        
+        
 
+      <header className="App-header">
 
         <ExampleModal />
         ===========================================================================
