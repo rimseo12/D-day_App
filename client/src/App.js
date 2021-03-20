@@ -1,5 +1,5 @@
 import './App.css'
-import React, { Fragment, useState } from 'react'
+import React, { useState } from 'react'
 import { Route, Switch } from 'react-router-dom'
 import { Button } from 'antd'
 import axios from 'axios'
@@ -22,13 +22,13 @@ function App() {
   const handleChange = (e) => {
 
     setPhotoName(e.target.files[0])
-    console.log("result" + e.target.files[0])
+    console.log("result" + JSON.stringify(e.target.files[0]))
   }
 
   const handleUpload = async (e) => {
     const formData = new FormData()
-    formData.append("image_url", PhotoName)
-
+    formData.append("imageName", PhotoName) 
+    
     const config = {
       headers: {
         "content-type": "multipart/form-data"
@@ -64,7 +64,7 @@ function App() {
 
         <ExampleModal />
         ===========================================================================
-        <form onSubmit={handleSubmit}>
+        {/* <form onSubmit={handleSubmit}>
           상품명:<input type="text" name="name" id="PN" style={{ color: 'black' }} /> <br />
 
           파일 업로드:<input type="file" name="image_url" onChange={handleChange} style={{ color: 'black' }} />
@@ -74,7 +74,7 @@ function App() {
           유효기간:<input readOnly value="2021/03/18" name="expiration_date" id="ED" style={{ color: 'black' }} />
           <br />
           <button type="submit" style={{ color: "red" }}>생성</button>
-        </form>
+        </form> */}
         ===========================================================================
         <button onClick={handleClick}>
           리스트 불러오기!
@@ -84,11 +84,13 @@ function App() {
             .filter((itme) => (itme.status === "active"))
             .map((item, index) => (
               <div key={index} id={index} style={{ display: 'inline-flex' }}>
-                <b>{item.name}</b> <span>{item._id}</span>
+                <b>{item.name}</b> <span>{item.image_url}</span> <span>{item.expiration_date}</span>
                 <div style={{ display: 'inline-flex', alignItems: 'baseline' }}>
                   <ExampleModal
                     product_id={item._id}
                     productName={item.name}
+                    productImage={item.image_url}
+                    productExp={item.expiration_date}
                   />
                   <Button type="primary" onClick={async () => {
                     console.log("dd")

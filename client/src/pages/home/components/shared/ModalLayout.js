@@ -1,49 +1,34 @@
 import { useState } from 'react'
+import axios from 'axios'
 //import { Button, Form, Modal } from 'react-bootstrap'
 //import 'bootstrap/dist/css/bootstrap.min.css'
 import { Modal, Button, Input, Upload, message, DatePicker, Form} from 'antd'
-import { UploadOutlined } from '@ant-design/icons'
+import { AlertTwoTone, UploadOutlined } from '@ant-design/icons'
 import 'antd/dist/antd.css'
 import moment from 'moment'
 
-import axios from 'axios'
 
 
-const CreateForm = ({ product_id, visible, onCreate, onCancel }) => {
-    const [form] = Form.useForm()
-    const dateFormat = 'YYYY/MM/DD'
-    const fileUpload = {
-        name: 'file',
-        action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-        headers: {
-          authorization: 'authorization-text',
-        },
-        onChange(info) {
-          if (info.file.status !== 'uploading') {
-            console.log(info.file, info.fileList)
-          }
-          if (info.file.status === 'done') {
-            message.success(`${info.file.name} file uploaded successfully`)
-          } else if (info.file.status === 'error') {
-            message.error(`${info.file.name} file upload failed.`)
-          }
-        },
-      }
-
+const CreateForm = ({ product_id, productName, productImage, productExp, visible, onCreate, onCancel, onUpload, onModify}) => {
+  const [form] = Form.useForm()
+  const dateFormat = 'YYYY/MM/DD' 
+    
     if(product_id){
       return(
         <Modal
         visible={visible}
         title="Modify"
-        //okText="Create"
+        okText="Modify"
         cancelText="Cancel"
+        onUpload={onUpload}
+        onModify={onModify}
         onCancel={onCancel}
         onOk={() => {
           form
             .validateFields()
             .then((values) => {
               form.resetFields()
-              onCreate(values)
+              onModify(values)
             })
             .catch((info) => {
               console.log('Validate Failed:', info);
@@ -68,15 +53,14 @@ const CreateForm = ({ product_id, visible, onCreate, onCancel }) => {
               },
             ]}
           >
-            <Input type="text" defaultValue={product_id}/>
+            <Input type="text" defaultValue={productName}/>
           </Form.Item>
           <Form.Item name="image_url" label="image_url">
-            <Upload {...fileUpload}>
-               <Button icon={<UploadOutlined />}>Click to Upload</Button>
-            </Upload>
+              기존 이미지: <input type="text" defaultValue={productImage}/>
+              <input  onChange={onUpload} type="file" name="image_url" style={{ color: 'black' }} />
           </Form.Item>
           <Form.Item name="expiration_date" label="expiration_date">
-               <DatePicker defaultValue={moment('2021/03/16', dateFormat)} format={dateFormat} />
+               <DatePicker defaultValue={moment(productExp, dateFormat)} format={dateFormat} />
           </Form.Item>
         </Form>
       </Modal>
@@ -89,6 +73,7 @@ const CreateForm = ({ product_id, visible, onCreate, onCancel }) => {
         title="Add Product"
         okText="Create"
         cancelText="Cancel"
+        onUpload={onUpload}
         onCancel={onCancel}
         onOk={() => {
           form
@@ -123,12 +108,10 @@ const CreateForm = ({ product_id, visible, onCreate, onCancel }) => {
             <Input />
           </Form.Item>
           <Form.Item name="image_url" label="image_url">
-            <Upload {...fileUpload}>
-               <Button icon={<UploadOutlined />}>Click to Upload</Button>
-            </Upload>
+              <input  onChange={onUpload} type="file" name="image_url" style={{ color: 'black' }} />
           </Form.Item>
           <Form.Item name="expiration_date" label="expiration_date">
-               <DatePicker defaultValue={moment('2021/03/16', dateFormat)} format={dateFormat} />
+              <DatePicker defaultValue={moment('2021/03/16', dateFormat)} format={dateFormat} />
           </Form.Item>
         </Form>
       </Modal>
@@ -138,14 +121,51 @@ const CreateForm = ({ product_id, visible, onCreate, onCancel }) => {
   
   const ExampleModal = (props) => {
     const [visible, setVisible] = useState(false)
-  
+    const [ProductSingleInfo, setProductSingleInfo] = useState([])
+    let Image = null
+    const onUpload = (e) => { 
+      if(e.target.id === "image_url"){
+        handleUpload(e.target.files[0])
+      }
+    }
+    const handleUpload = async (fileName) => {
+      const formData = new FormData()
+      formData.append("imageName", fileName) //name === route/index.js single()함수 파라미터
+      const config = {
+        headers: {
+          "content-type": "multipart/form-data"
+        }
+      }
+     
+      const response = await axios.post("/upload", formData, config)
+      if(response.status === 200){
+        console.log(response) 
+        console.log(response.data.data.filename)
+        Image = response.data.data.filename
+      }
+      
+    }
+    //등록하기
     const onCreate = async(values) => {
+      console.log('Received values of form: ', values, Image)
       await axios.post("/product/add", {
           name: values.name,
+          image_url: Image,
           expiration_date: moment.utc(values.expiration_date)
       })
-      
-      console.log('Received values of form: ', values)
+      alert("등록 완료")
+      setVisible(false)
+    }
+    
+    //수정하기
+    const onModify = async(values) => {
+      console.log('Received values of form: ', values, Image)
+      await axios.put(`/products/${props.product_id}`, {
+        name: values.name,
+        image_url: Image,
+        expiration_date: moment.utc(values.expiration_date)
+      })
+      alert("수정 완료")
       setVisible(false)
     }
     if(props.product_id) {
@@ -160,8 +180,13 @@ const CreateForm = ({ product_id, visible, onCreate, onCancel }) => {
             Modify
           </Button>
           <CreateForm
-            product_id={props.product_id}
             visible={visible}
+            product_id={props.product_id}
+            productName={props.productName}
+            productImage={props.productImage}
+            productExp={props.productExp}
+            onUpload={onUpload}
+            onModify={onModify}
             onCancel={() => {
               setVisible(false)
             }}
@@ -182,6 +207,7 @@ const CreateForm = ({ product_id, visible, onCreate, onCancel }) => {
           </Button>
           <CreateForm
             visible={visible}
+            onUpload={onUpload}
             onCreate={onCreate}
             onCancel={() => {
               setVisible(false)
