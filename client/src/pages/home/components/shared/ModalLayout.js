@@ -1,7 +1,5 @@
 import { useState } from 'react'
 import axios from 'axios'
-//import { Button, Form, Modal } from 'react-bootstrap'
-//import 'bootstrap/dist/css/bootstrap.min.css'
 import { Modal, Button, Input, Upload, message, DatePicker, Form} from 'antd'
 import { AlertTwoTone, UploadOutlined } from '@ant-design/icons'
 import 'antd/dist/antd.css'

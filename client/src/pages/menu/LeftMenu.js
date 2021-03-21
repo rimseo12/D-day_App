@@ -1,14 +1,27 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Menu } from 'antd'
+import { Link } from 'react-router-dom'
+import { HomeTwoTone, DeleteTwoTone } from '@ant-design/icons'
 
 function LeftMenu() {
+ const [Current, setCurrent] = useState("home")
+ const handleClick = (e) => {
+  setCurrent(e.key)
+ } 
+ console.log("current:",Current)
+
  return(
-    <Menu>
+    <Menu
+      onClick={handleClick}
+      selectedKeys={Current}
+      style={{ width: 256 }}
+      mode="inline"
+    >
       <Menu.Item key="home">
-        <a href="/">Home</a>
+        <HomeTwoTone /><Link to="/">Home</Link>
       </Menu.Item>
       <Menu.Item key="trash">
-        <a href="/trash">Trash</a>
+        <DeleteTwoTone /><Link to="/trash">Trash</Link>
       </Menu.Item>
     </Menu>
  )
