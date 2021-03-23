@@ -6,42 +6,79 @@ import ModalLayout from './ModalLayout'
 import ProductCard from '../../../shared/ProductCard'
 
 function ProductList() {
-    const [productList, setProductList] = useState([])
+  const [productList, setProductList] = useState([])
 
-    useEffect(() => {
-        fetchProduct()
-    }, [productList])
+  useEffect(() => {
+    fetchProduct()
+  }, [])
 
-    const fetchProduct = async () => {
-        const productObject = await getProducts()
-        setProductList(productObject.data)
+  const fetchProduct = async () => {
+    const productObject = await getProducts()
+    console.log(productObject)
+    //setProductList(productObject.data) //기존상품들, 새로추가된 상품0
+  }
+
+
+  const [visible, setVisible] = useState(false)
+  let Image = null
+  const onUpload = (e) => {
+    if (e.target.id === "image_url") {
+        handleUpload(e.target.files[0])
+    }
+  }
+  const handleUpload = async (fileName) => {
+    const formData = new FormData()
+    formData.append("imageName", fileName) //name === route/index.js single()함수 파라미터
+    const config = {
+      headers: {
+        "content-type": "multipart/form-data"
+      }
     }
 
-    const [visible, setVisible] = useState(false)
-    let Image = null
-    const onUpload = (e) => {
-        if (e.target.id === "image_url") {
-            handleUpload(e.target.files[0])
-        }
+  const response = await axios.post("/upload", formData, config)
+    if (response.status === 200) {
+      console.log(response)
+      console.log(response.data.data.filename)
+      Image = response.data.data.filename
     }
-    const handleUpload = async (fileName) => {
-        const formData = new FormData()
-        formData.append("imageName", fileName) //name === route/index.js single()함수 파라미터
-        const config = {
-            headers: {
-                "content-type": "multipart/form-data"
-            }
-        }
+  }
+  //생성 modal 호출
+  const handleClickFromCreate = (visible, title, okText, cancelText, onUpload, onCreate, onCancel) => {
+    setVisible(true)
+      return <ModalLayout
+            visible={visible}
+            title={title}
+            okText={okText}
+            cancelText={cancelText}
+            onCreate={onCreate}
+            onUpload={onUpload}
+            onCancel={() => {
+                setVisible(false)
+            }}
+      />
+    
+    
+  }
 
-        const response = await axios.post("/upload", formData, config)
-        if (response.status === 200) {
-            console.log(response)
-            console.log(response.data.data.filename)
-            Image = response.data.data.filename
-        }
-
-    }
-
+  //수정 modal 호출
+  const hanldeClickFromModify = (title, okText, cancelText, productId, productName, productImage, productExp) => {
+    setVisible(true)
+        return <ModalLayout
+            visible={visible}
+            title={title}
+            okText={okText}
+            cancelText={cancelText}
+            product_id={productId}
+            productName={productName}
+            productImage={productImage}
+            productExp={productExp}
+            onUpload={onUpload}
+            onModify={onModify}
+            onCancel={() => {
+                setVisible(false)
+            }}
+    />
+  }
     //등록하기
     const onCreate = async (values) => {
         console.log('Received values of form: ', values, Image)
@@ -51,7 +88,7 @@ function ProductList() {
             expiration_date: moment.utc(values.expiration_date)
         })
         alert("등록 완료")
-        setVisible(false)
+        setVisibleForCreate(false)
     }
 
     //수정하기
@@ -69,7 +106,7 @@ function ProductList() {
     return (
         <>
             <ProductCard />
-            =====
+            ================
             <div>
                 <Button
                     type="primary"
@@ -100,31 +137,28 @@ function ProductList() {
                             <>
                                 <Divider />
                                 <div key={index} id={index} style={{ display: 'inline-flex' }}>
-                                    <b>{item.name}</b> <span>{item.image_url}</span> <span>{item.expiration_date}</span>
+                                    <img src={`uploads/${item.image_url}`} style={{ height: 100 }} />
+                                    <b>{item.name}</b>
+                                    <span>{item.image_url}</span>
+                                    <span>{item.expiration_date}</span>
                                     <div style={{ display: 'inline-flex', alignItems: 'baseline' }}>
-                                            <Button
-                                                type="primary"
-                                                onClick={() => {
-                                                    setVisible(true)
-                                                }}
-                                            >
-                                                Modify/{item.name}
-                                            </Button>
-                                            <ModalLayout
-                                                visible={visible}
-                                                title="Modify Product"
-                                                okText="Modify"
-                                                cancelText="Cancel"
-                                                product_id={item._id}
-                                                productName={item.name}
-                                                productImage={item.image_url}
-                                                productExp={item.expiration_date}
-                                                onUpload={onUpload}
-                                                onModify={onModify}
-                                                onCancel={() => {
-                                                    setVisible(false)
-                                                }}
-                                            />
+                                        <Button
+                                            type="primary"
+                                            // onClick={() => {
+                                            //     setVisible(true)
+                                            // }}
+                                            onClick={
+                                                hanldeClickFromModify("Modify Product",
+                                                    "Modify",
+                                                    "Cancel",
+                                                    item._id,
+                                                    item.name,
+                                                    item.image_url,
+                                                    item.expiration_date
+                                                )}
+                                        >
+                                            Modify/{item.name}
+                                        </Button>
 
 
                                         <Button type="primary" onClick={async () => {

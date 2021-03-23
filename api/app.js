@@ -9,6 +9,8 @@ const mongoose = require('mongoose');
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
 
+app.use(express.static("public"));
+
 const port = process.env.PORT || 8080;
 const server = app.listen(port, function() {
     console.log("Server is working-PORT:", server.address().port);

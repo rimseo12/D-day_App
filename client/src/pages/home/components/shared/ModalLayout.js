@@ -14,7 +14,8 @@ const CreateForm = ({
   product_id, 
   productName, 
   productImage, 
-  productExp, 
+  productExp,
+  setVisibleForCreate, 
   visible, 
   onCreate, 
   onCancel, 
@@ -22,10 +23,13 @@ const CreateForm = ({
   onModify }) => {
   const [form] = Form.useForm()
   const dateFormat = 'YYYY/MM/DD'
+  console.log(productName)
 
   return (
     <Modal
-      visible={visible}
+      visible={
+        visible
+      }
       title={title}
       okText={okText}
       cancelText={cancelText}
@@ -42,8 +46,8 @@ const CreateForm = ({
             onModify(values, product_id)
           })
           .catch((info) => {
-            console.log('Validate Failed:', info);
-          });
+            console.log('Validate Failed:', info)
+          })
       }}
     >
       <Form
