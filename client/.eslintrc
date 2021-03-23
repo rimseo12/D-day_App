@@ -4,16 +4,9 @@
         "node":true,
         "es6":true
     },
-    "extends": "standard",
+    
     "rules": {
-        "indent": [
-            "error",
-            4
-        ],
-        "semi": [
-            "error",
-            "always"
-        ],
+        
         "no-trailing-spaces": 0,
         "keyword-spacing": 0,
         "no-unused-vars": 1,
