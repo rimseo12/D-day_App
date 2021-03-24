@@ -1,5 +1,6 @@
 import { endPoint, config } from './config'
 import axios from 'axios'
+import moment from 'moment'
 
 export const getProducts = async() => {
   return await axios.get(endPoint)
@@ -26,4 +27,14 @@ export const modifyProduct = async(values, product_id, image) => {
     image_url: image,
     expiration_date: moment.utc(values.expiration_date)
   })
+}
+
+export const deleteProduct = async(product_id) => {
+  return await axios.put(`/products/${product_id}`, {
+    status: "inactive"
+  })
+}
+
+export const deleteForever = async(product_id) => {
+  return await axios.delete(`/products/${product_id}`)
 }

@@ -1,11 +1,24 @@
 import { Table, Button } from 'antd'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { getProducts } from '../../../api/Product'
 
 function TrashList() {
+  const [trashList, setTrashList] = useState([])
+  useEffect(() => {
+    fetchProduct()
+  },[])
+  const fetchProduct = async() => {
+    const productObject = await getProducts()
+    setTrashList(productObject.data)
+  }
   const columns = [
+    // {
+    //   title: 'Name',
+    //   dataIndex: 'name'
+    // },
     {
       title: 'Product',
-      dataIndex: 'product'
+      dataIndex: 'name'
     }
   ]
 
@@ -31,7 +44,13 @@ function TrashList() {
           Delete forever
         </Button>
       </div>
-      <Table rowSelection={handleSelectChange} columns={columns} dataSource={data} />
+      <Table 
+      rowSelection={handleSelectChange} 
+      columns={columns}
+      //dataSource={data} 
+      dataSource={trashList && 
+        trashList.filter((item) => (item.status === "inactive"))} 
+      />
     </div>
   )
 }

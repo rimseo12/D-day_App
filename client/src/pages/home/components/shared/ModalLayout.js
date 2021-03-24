@@ -15,7 +15,6 @@ const CreateForm = ({
   productName, 
   productImage, 
   productExp,
-  setVisibleForCreate, 
   visible, 
   onCreate, 
   onCancel, 
@@ -23,13 +22,10 @@ const CreateForm = ({
   onModify }) => {
   const [form] = Form.useForm()
   const dateFormat = 'YYYY/MM/DD'
-  console.log(productName)
 
   return (
     <Modal
-      visible={
-        visible
-      }
+      visible={visible}
       title={title}
       okText={okText}
       cancelText={cancelText}
@@ -71,11 +67,15 @@ const CreateForm = ({
           <Input type="text" defaultValue={productName} />
         </Form.Item>
         <Form.Item name="image_url" label="image_url">
-          기존 이미지: <input type="text" defaultValue={productImage} />
+          {productImage && '기존 이미지:'+ <input type="text" defaultValue={productImage} />}
           <input onChange={onUpload} type="file" name="image_url" style={{ color: 'black' }} />
         </Form.Item>
         <Form.Item name="expiration_date" label="expiration_date">
-          <DatePicker defaultValue={moment(productExp, dateFormat)} format={dateFormat} />
+          {
+            productExp? <DatePicker defaultValue={moment(productExp, dateFormat)} format={dateFormat} />:
+            <DatePicker defaultValue={moment(Date.now, dateFormat)} format={dateFormat} />
+          }
+          
         </Form.Item>
       </Form>
     </Modal>
