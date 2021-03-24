@@ -6,7 +6,7 @@
     },
     "extends": ["plugin:prettier/recommended"],
     "rules": {   
-        "semi": [2, "never"],
+        //"semi": [2, "never"],
         "no-use-before-define": "off",
         "no-underscore-dangle": "off",
         "no-shadow": "off"
