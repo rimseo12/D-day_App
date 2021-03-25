@@ -5,10 +5,10 @@
         "es6":true
     },
     "extends": ["plugin:prettier/recommended"],
-    "rules": {   
-        //"semi": [2, "never"],
-        "no-use-before-define": "off",
-        "no-underscore-dangle": "off",
-        "no-shadow": "off"
+    "rules": { 
+        // "no-use-before-define": "off",
+        // "no-underscore-dangle": "off",
+        // "no-shadow": "off",
+        "prettier/prettier": "warn"
     }
 }

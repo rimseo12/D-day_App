@@ -13,7 +13,7 @@ function App() {
     <div className="App">
       <Layout>
         <Sider width={256} style={{ minHeight: '100vh', background: '#fff' }}>
-           <div style={{ height: 60 }}>Logo</div>
+          <div style={{ height: 60 }}>Logo</div>
           <LeftMenu />
         </Sider>
 

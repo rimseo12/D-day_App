@@ -1,55 +1,112 @@
-import { Table, Button } from 'antd'
-import { useEffect, useState } from 'react'
-import { getProducts } from '../../../api/Product'
+import { Table, Button, message } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { getProducts, deleteForever, moveToHome } from '../../../api/Product'
 
 function TrashList() {
   const [trashList, setTrashList] = useState([])
-  useEffect(() => {
-    fetchProduct()
-  },[])
-  const fetchProduct = async() => {
-    const productObject = await getProducts()
-    setTrashList(productObject.data)
-  }
-  const columns = [
-    // {
-    //   title: 'Name',
-    //   dataIndex: 'name'
-    // },
-    {
-      title: 'Product',
-      dataIndex: 'name'
-    }
-  ]
-
-  const data = []
-  for (let i = 0; i < 46; i++) {
-    data.push({
-      key: i,
-      name: `Edward King ${i}`,
-      age: 32,
-      address: `London, Park Lane no. ${i}`,
-    })
-  }
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [loading, setLoading] = useState(false)
 
-  const handleSelectChange = () => {
-    setSelectedRowKeys(rowSelection.selectedRowKeys)
+  useEffect(() => {
+    fetchProduct()
+  },[])
+
+  const fetchProduct = async() => {
+    const productObject = await getProducts()
+    setTrashList(productObject.data)
+    console.log(productObject.data)
   }
+
+  const columns = [
+    {
+      title:'Product',
+      render: item => {
+        return item.hasOwnProperty('image_url') ? (
+          <div style={{ display: 'flex'}}>
+            <img src={`uploads/${item.image_url}`} style={{ height: 100 }} />
+            <div>
+              <div style={{ marginBottom: 5 }}>{item.name}</div>
+              <div>{item.expiration_date}</div>
+            </div>
+            <Button 
+              type="link"
+              onClick={() =>{ handleDeleteForever()}}
+              style={{ marginTop: 20 }}
+            >
+              Delete forever
+            </Button>
+          </div>
+         
+
+        ) : (
+          <div style={{ display: 'flex'}}>
+            <div style={{ height: 100 }}>No image</div>
+            <div>
+              <div style={{ marginBottom: 5 }}>{item.name}</div>
+              <div>{item.expiration_date}</div>
+            </div>
+            <Button 
+              type="link"
+              onClick={() =>{ handleDeleteForever()}}
+              style={{ marginTop: 20 }}
+            >
+              Delete forever
+            </Button>
+          </div>
+        )
+      }
+    },
+    // {
+    //   title: '',
+    //   dataIndex: 'name'
+    // }
+  ]
+
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      setSelectedRowKeys(selectedRowKeys)
+      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    }
+  }
+
+  const handleDeleteForever = async() => {
+    await deleteForever(selectedRowKeys)
+    message.success('deleted forever')
+    fetchProduct()
+  }
+
+  const handleMoveToHome = async() => {
+    await moveToHome(selectedRowKeys)
+    message.info('moved to home')
+    fetchProduct()
+  }
+
   return(
+
     <div>
       <div style={{ marginBottom: 16, display: 'flex' }}>
-        <Button type="primary">
+        <Button 
+          type="link"
+          onClick={() =>{ handleDeleteForever()}}
+        >
           Delete forever
+        </Button>
+        <Button 
+          type="link"
+          onClick={() =>{ handleMoveToHome()}}
+        >
+          Move to home
         </Button>
       </div>
       <Table 
-      rowSelection={handleSelectChange} 
-      columns={columns}
-      //dataSource={data} 
-      dataSource={trashList && 
-        trashList.filter((item) => (item.status === "inactive"))} 
+        rowSelection={rowSelection}
+        columns={columns}
+        rowKey={'_id'}
+        dataSource={trashList && 
+          trashList
+          .filter((item) => (item.status === "inactive")) 
+             
+        } 
       />
     </div>
   )

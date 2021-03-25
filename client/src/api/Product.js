@@ -35,6 +35,16 @@ export const deleteProduct = async(product_id) => {
   })
 }
 
-export const deleteForever = async(product_id) => {
-  return await axios.delete(`/products/${product_id}`)
+export const deleteForever = async(products) => {
+  for(let id of products){
+    await axios.delete(`/products/${id}`)
+  }
+}
+
+export const moveToHome = async(products) => {
+  for(let id of products){
+    await axios.put(`/products/${id}`, {
+    status: "active"
+    })
+  }
 }
