@@ -9,6 +9,7 @@ export const getProducts = async() => {
 export const uploadProductImage = async(formData) => {
   const res = await axios.post("/upload", formData, config)
   if(res.status === 200){
+    console.log(res)
     return res.data.data.filename
   }
 }

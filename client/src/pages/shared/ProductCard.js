@@ -8,16 +8,15 @@ function ProductCard() {
         <List.Item
             actions={[<a key="list-loadmore-edit">edit</a>, <a key="list-loadmore-more">more</a>]}
           >
-            <Skeleton avatar title={false} active>
+            
               <List.Item.Meta
                 avatar={
-                  <Avatar />
+                  <img src={'uploads/noImage.png'} style={{ height: 100 }} />
                 }
                 title={<a href="https://ant.design">title</a>}
-                description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                description="2021-03-26"
               />
-              <div>content</div>
-            </Skeleton>
+            
           </List.Item>
     </List>
   )

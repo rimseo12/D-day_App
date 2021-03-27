@@ -1,11 +1,6 @@
-import { useState } from 'react'
-import axios from 'axios'
-import { Modal, Button, Input, Upload, message, DatePicker, Form } from 'antd'
-import { AlertTwoTone, UploadOutlined } from '@ant-design/icons'
+import { Modal, Input, DatePicker, Form } from 'antd'
 import 'antd/dist/antd.css'
 import moment from 'moment'
-
-
 
 const CreateForm = ({ 
   title,
@@ -22,7 +17,7 @@ const CreateForm = ({
   onModify }) => {
   const [form] = Form.useForm()
   const dateFormat = 'YYYY/MM/DD'
-
+  
   return (
     <Modal
       visible={visible}
@@ -32,14 +27,20 @@ const CreateForm = ({
       onCreate={onCreate}
       onUpload={onUpload}
       onModify={onModify}
-      onCancel={onCancel}
+      onCancel={() => {
+        form.resetFields()
+        onCancel()
+      }}
       onOk={() => {
         form
           .validateFields()
           .then((values) => {
             form.resetFields()
-            onCreate(values)
-            onModify(values, product_id)
+            if(product_id){
+              onModify(values, product_id)  
+            } else {
+              onCreate(values)
+            }
           })
           .catch((info) => {
             console.log('Validate Failed:', info)
@@ -49,7 +50,7 @@ const CreateForm = ({
       <Form
         form={form}
         layout="vertical"
-        name="form_in_modal"
+        name='form_in_modal'
         initialValues={{
           modifier: 'public',
         }}
@@ -68,14 +69,13 @@ const CreateForm = ({
         </Form.Item>
         <Form.Item name="image_url" label="image_url">
           {productImage && '기존 이미지:'+ <input type="text" defaultValue={productImage} />}
-          <input onChange={onUpload} type="file" name="image_url" style={{ color: 'black' }} />
+          <input onChange={onUpload} type="file" name="image_url" id="image_url" style={{ color: 'black' }} />
         </Form.Item>
         <Form.Item name="expiration_date" label="expiration_date">
           {
             productExp? <DatePicker defaultValue={moment(productExp, dateFormat)} format={dateFormat} />:
-            <DatePicker defaultValue={moment(Date.now, dateFormat)} format={dateFormat} />
-          }
-          
+            <DatePicker defaultValue={moment('2021-03-26', dateFormat)} format={dateFormat} />
+          }         
         </Form.Item>
       </Form>
     </Modal>
