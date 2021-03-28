@@ -35,7 +35,6 @@ function TrashList() {
             <Button
               id={item._id}
               type="link"
-              //onClick={() =>{ handleDeleteForever()}}
               onClick={handleDeleteIndividual}
               style={{ marginTop: 20 }}
             >

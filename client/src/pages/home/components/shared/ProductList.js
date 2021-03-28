@@ -21,6 +21,7 @@ function ProductList() {
   const fetchProduct = async () => {
     const productObject = await getProducts()
     setProductList(productObject.data)
+    //console.log(productObject.data)
   }
 
   let image = null

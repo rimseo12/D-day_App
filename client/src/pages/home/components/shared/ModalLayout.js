@@ -1,4 +1,5 @@
-import { Modal, Input, DatePicker, Form } from 'antd'
+import { Modal, Input, DatePicker, Form, Upload, Button } from 'antd'
+import { UploadOutlined } from '@ant-design/icons'
 import 'antd/dist/antd.css'
 import moment from 'moment'
 
@@ -17,9 +18,7 @@ const CreateForm = ({
   onModify }) => {
   const [form] = Form.useForm()
   const dateFormat = 'YYYY/MM/DD'
-  const onFinish = (values) => {
-    console.log('Success:', values);
-  }
+
   return (
     <Modal
       visible={visible}
@@ -33,14 +32,13 @@ const CreateForm = ({
         form.resetFields()
         onCancel()
       }}
-      onOk={(values) => {
+      onOk={() => {
         form
           .validateFields()
           .then((values) => {
-            console.log(values)
-
             form.resetFields()
             if(product_id){
+              //console.log(values)
               onModify(values, product_id)  
             } else {
               onCreate(values)
@@ -56,9 +54,10 @@ const CreateForm = ({
         layout="vertical"
         name='form_in_modal'
         initialValues={{
-          modifier: 'public',
+          name: productName,
+          image_url: productImage,
+          expiration_date: moment(productExp, dateFormat)
         }}
-        onFinish={onFinish}
       >
         <Form.Item
           name="name"
@@ -66,21 +65,27 @@ const CreateForm = ({
           rules={[
             {
               required: true,
-              message: '상품명을 등록해주세요!',
+              message: '상품명을 등록해주세요!'
             },
           ]}
         >
-          <Input type="text" defaultValue={productName}/>
+          <Input/>
         </Form.Item>
         <Form.Item name="image_url" label="image_url">
-          {productImage && '기존 이미지:'+ <input type="text" defaultValue={productImage} />}
-          <input onChange={onUpload} type="file" name="image_url" id="image_url" style={{ color: 'black' }} />
+          {productImage && '기존 이미지:' && <img name="image_url" src={`uploads/${productImage}`} style={{ width: 100, height: 100 }} />}
+          <Input onChange={onUpload} type="file" id="image_url" style={{ color: 'black' }} />
         </Form.Item>
-        <Form.Item name="expiration_date" label="expiration_date">
-          {
-            productExp? <DatePicker defaultValue={moment(productExp, dateFormat)} format={dateFormat} />:
-            <DatePicker defaultValue={moment('2021-03-26', dateFormat)} format={dateFormat} />
-          }         
+        <Form.Item 
+          name="expiration_date" 
+          label="expiration_date"
+          rules={[
+            {
+              required: true,
+              message: '날짜를 선택해주세요!'
+            },
+          ]}
+        >      
+          <DatePicker/>
         </Form.Item>
       </Form>
     </Modal>
