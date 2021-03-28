@@ -1,6 +1,6 @@
 import { Table, Button, message } from 'antd'
 import React, { useEffect, useState } from 'react'
-import { getProducts, deleteForever, moveToHome } from '../../../api/Product'
+import { getProducts, deleteForever, deleteIndividual, moveToHome } from '../../../api/Product'
 import moment from 'moment'
 
 function TrashList() {
@@ -16,7 +16,6 @@ function TrashList() {
   const fetchProduct = async() => {
     const productObject = await getProducts()
     setTrashList(productObject.data)
-    console.log(productObject.data)
   }
 
   const columns = [
@@ -36,9 +35,9 @@ function TrashList() {
             <Button
               id={item._id}
               type="link"
-              onClick={() =>{ handleDeleteForever()}}
+              //onClick={() =>{ handleDeleteForever()}}
+              onClick={handleDeleteIndividual}
               style={{ marginTop: 20 }}
-              disabled={checked}
             >
               Delete forever
             </Button>
@@ -52,9 +51,20 @@ function TrashList() {
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setSelectedRowKeys(selectedRowKeys)
-      setChecked(false)
+      if(selectedRows.length !== 0 ) {
+        setChecked(false)
+      } else {
+        setChecked(true)
+      }
       console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     }
+  }
+ 
+  const handleDeleteIndividual = async(e) => {
+    const product_id = e.target.parentNode.id
+    await deleteIndividual(product_id)
+    message.success('deleted forever')
+    fetchProduct()
   }
 
   const handleDeleteForever = async() => {

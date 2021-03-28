@@ -17,7 +17,9 @@ const CreateForm = ({
   onModify }) => {
   const [form] = Form.useForm()
   const dateFormat = 'YYYY/MM/DD'
-  
+  const onFinish = (values) => {
+    console.log('Success:', values);
+  }
   return (
     <Modal
       visible={visible}
@@ -31,10 +33,12 @@ const CreateForm = ({
         form.resetFields()
         onCancel()
       }}
-      onOk={() => {
+      onOk={(values) => {
         form
           .validateFields()
           .then((values) => {
+            console.log(values)
+
             form.resetFields()
             if(product_id){
               onModify(values, product_id)  
@@ -54,6 +58,7 @@ const CreateForm = ({
         initialValues={{
           modifier: 'public',
         }}
+        onFinish={onFinish}
       >
         <Form.Item
           name="name"
@@ -65,7 +70,7 @@ const CreateForm = ({
             },
           ]}
         >
-          <Input type="text" defaultValue={productName} />
+          <Input type="text" defaultValue={productName}/>
         </Form.Item>
         <Form.Item name="image_url" label="image_url">
           {productImage && '기존 이미지:'+ <input type="text" defaultValue={productImage} />}

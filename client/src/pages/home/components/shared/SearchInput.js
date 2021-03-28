@@ -20,11 +20,8 @@ function LocalStorage() {
     
     const handleGetKeyWord = (e) => {
         debounce(() => {
-            alert("tada"+ e.target.value)  
+            console.log(e.target.value)  
         },1000)
-        
-
- 
     }
 
     return(
@@ -34,7 +31,8 @@ function LocalStorage() {
               placeholder="Search here" 
               enterButton 
               style={{ marginBottom: 10 }}
-              onKeyUp={handleGetKeyWord} 
+              //onKeyUp={handleGetKeyWord} 
+              onKeyUp={handleGetKeyWord}
             />
         </Fragment>
         
