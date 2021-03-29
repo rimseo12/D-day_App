@@ -4,8 +4,10 @@ import { getProducts, uploadProductImage, postProduct, modifyProduct, deleteProd
 import ModalLayout from './ModalLayout'
 import moment from 'moment'
 import ProductCard from '../../../shared/ProductCard'
+import Search from './SearchInput'
 
 function ProductList() {
+  
   const [productList, setProductList] = useState([])
   const [visible, setVisible] = useState(false)
   const [productId, setProductId] = useState(null)
@@ -18,10 +20,26 @@ function ProductList() {
     fetchProduct()
   }, [])
 
+  let newProductList = []
+  const handleSearch = (keyWord) => {
+    if(keyWord !== undefined && keyWord.trim('') !== ""){
+      for(let i in productList){
+        let regexp = productList[i].name.toLowerCase()
+        if( productList[i].status === "active" 
+          && regexp.indexOf(keyWord) > -1){
+          newProductList.push(productList[i])
+        }
+      }
+      setProductList(newProductList)
+    } else {
+      fetchProduct()
+    } 
+  }
+
   const fetchProduct = async () => {
     const productObject = await getProducts()
     setProductList(productObject.data)
-    //console.log(productObject.data)
+    console.log(productObject.data)
   }
 
   let image = null
@@ -62,6 +80,10 @@ function ProductList() {
   return (
     <>
       <div>
+        <Search
+          keyWord={handleSearch}
+        />
+
         <Button
           type="primary"
           onClick={() => {
@@ -83,17 +105,21 @@ function ProductList() {
           }}
         />
       </div>
+      
+      {/* UI수정 할 예정
+      <img src={'images/statusUI.png'}  style={{ width: 100, height: 100 }}/> */}
+
       <Col xs={24} md={12}>
         {productList &&
           productList
             .filter((item) => (item.status === "active"))
             .map((item, index) => (
               <>
-                <Divider />
-                <div key={item._id} style={{ display: 'inline-flex' }}>
+                
+                <div key={item._id} style={{ display: 'inline-flex', border: '0.0625rem solid #D7E2EB', borderRadius: '0.25rem' }}>
                   {
                     item.image_url ? <img src={`uploads/${item.image_url}`} style={{ width: 100, height: 100 }} /> :
-                      <img src={'uploads/noImage.png'} style={{ height: 100 }} />
+                      <img src={'images/NoImage.png'} style={{ width: 100, height: 100 }} />
                   }
 
                   <div style={{ marginLeft: 97 }}>
@@ -116,6 +142,7 @@ function ProductList() {
                     {productId &&
                       productId === item._id &&
                       <ModalLayout
+                        key={item._id} 
                         visible={visible}
                         title="Modify Product"
                         cancelText="Cancel"

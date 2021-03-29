@@ -1,5 +1,4 @@
 import { Modal, Input, DatePicker, Form, Upload, Button } from 'antd'
-import { UploadOutlined } from '@ant-design/icons'
 import 'antd/dist/antd.css'
 import moment from 'moment'
 

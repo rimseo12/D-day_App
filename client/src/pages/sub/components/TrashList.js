@@ -26,7 +26,7 @@ function TrashList() {
           <div style={{ display: 'flex'}}>
             { item.hasOwnProperty('image_url')? 
                 <img src={`uploads/${item.image_url}`} style={{ height: 100 }} />
-                : <img src={'uploads/noImage.png'} style={{ height: 100 }} /> 
+                : <img src={'images/NoImage.png'} style={{ height: 100 }} /> 
             }
             <div>
               <div style={{ marginBottom: 5, fontWeight: 'bold' }}>{item.name}</div>
