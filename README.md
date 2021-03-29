@@ -1,5 +1,10 @@
 ![header](https://capsule-render.vercel.app/api?type=wave&color=auto&height=200&section=header&text=D-day%20&fontSize=60)
 
+![badge](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=MongoDB&logoColor=white)
+![badge](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=Node.js&logoColor=white)
+![badge](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=white)
+![badge](https://img.shields.io/badge/React%20Router-CA4245?style=flat-square&logo=React%20Router&logoColor=white)
+
 ## 프로젝트 설명
 
 D-day는 상품을 등록하여 유효기간을 관리해주는 서비스입니다.
@@ -31,12 +36,6 @@ exp-tracker\client> npm start
 | 상품 삭제 클릭 | 상품 삭제 PUT API 호출 |
 | 상품 영구 삭제 클릭 | 휴지통에 있는 상품 전체 삭제 및 선택 삭제 DELETE API 호출 |
 | 휴지통에서 메인 리스트로 돌려놓기 | 선택된 상품을 메인 리스트로 이동 PUT API 호출 |
-
-## 기술
-- Express
-- Mongoose
-- MongoDB
-
 
 
 구현하면서 새로 알게 된 지식 및 설치 순서를 정리했습니다.<br/>
