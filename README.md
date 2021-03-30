@@ -16,6 +16,19 @@ D-day는 상품을 등록하여 유효기간을 관리해주는 서비스입니�
 - 상품을 영구 삭제 및 복구를 할 수 있다.
 - 상품의 유효기간이 지난 경우, 1일 남았을 경우 알림을 받을 수 있다.
 
+## 컴포넌트 구조
+
+핵심 컴포넌트 관계도를 정의했습니다.
+
+- /pages/home/components/Home.js
+- /pages/home/components/shared/
+  - ProductList.js
+  - SearchInput.js
+  - ModalLayout.js
+- /pages/menu/
+  - LeftMenu.js
+- /pages/sub/components/TrashList.js
+
 ## 실행 방법
 
 ```sh
