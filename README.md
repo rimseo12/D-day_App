@@ -66,5 +66,4 @@ exp-tracker\client > npm start
 | 휴지통에서 홈으로 돌려놓기 | 선택된 상품을 메인 리스트로 이동 PUT API 호출 |
 
 
-구현하면서 새로 알게 된 지식 및 설치 순서를 정리했습니다.<br/>
-https://www.notion.so/bf460cbd7bb9487498dfe78c79e07d8c
+
