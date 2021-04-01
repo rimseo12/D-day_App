@@ -17,7 +17,8 @@ const CreateForm = ({
   onModify }) => {
   const [form] = Form.useForm()
   const dateFormat = 'YYYY/MM/DD'
-
+  //const newDateFormat = productExp? moment(productExp, dateFormat) : "Select date"
+  
   return (
     <Modal
       visible={visible}
@@ -28,8 +29,8 @@ const CreateForm = ({
       onUpload={onUpload}
       onModify={onModify}
       onCancel={() => {
-        form.resetFields()
         onCancel()
+        form.resetFields()
       }}
       onOk={() => {
         form
@@ -41,6 +42,7 @@ const CreateForm = ({
               onModify(values, product_id)  
             } else {
               onCreate(values)
+              form.resetFields()
             }
           })
           .catch((info) => {
@@ -55,7 +57,6 @@ const CreateForm = ({
         initialValues={{
           name: productName,
           image_url: productImage,
-          expiration_date: moment(productExp, dateFormat)
         }}
       >
         <Form.Item
@@ -83,8 +84,11 @@ const CreateForm = ({
               message: '날짜를 선택해주세요!'
             },
           ]}
-        >      
-          <DatePicker/>
+        > 
+        {
+          productExp? <DatePicker defaultValue={moment(productExp, dateFormat)}/> : <DatePicker/>
+        }     
+          
         </Form.Item>
       </Form>
     </Modal>

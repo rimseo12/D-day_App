@@ -14,10 +14,10 @@ function LeftMenu() {
     <Menu
       onClick={handleClick}
       selectedKeys={Current}
-      style={{ width: 256}}
+      //style={{ width: 256 }}
       mode="inline"
     >
-     
+
       <Menu.Item key="home">
         <HomeTwoTone /><Link to="/">Home</Link>
       </Menu.Item>
@@ -25,6 +25,7 @@ function LeftMenu() {
         <DeleteTwoTone /><Link to="/trash">Trash</Link>
       </Menu.Item>
     </Menu>
+
   )
 }
 

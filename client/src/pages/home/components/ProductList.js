@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Fragment } from 'react'
 import { Button, Col, Divider, Popconfirm, message } from 'antd'
-import { getProducts, uploadProductImage, postProduct, modifyProduct, deleteProduct } from '../../../../api/Product'
+import { getProducts, uploadProductImage, postProduct, modifyProduct, deleteProduct } from '../../../api/product'
 import ModalLayout from './ModalLayout'
 import moment from 'moment'
-import ProductCard from '../../../shared/ProductCard'
 import Search from './SearchInput'
 
 function ProductList() {
-  
+
   const [productList, setProductList] = useState([])
   const [visible, setVisible] = useState(false)
   const [productId, setProductId] = useState(null)
@@ -20,20 +19,29 @@ function ProductList() {
     fetchProduct()
   }, [])
 
+  let objArr = []
   let newProductList = []
   const handleSearch = (keyWord) => {
-    if(keyWord !== undefined && keyWord.trim('') !== ""){
-      for(let i in productList){
+    if (keyWord !== undefined && keyWord.trim('') !== "") {
+      objArr.push(keyWord)
+      console.log(objArr)
+      //window.localStorage.setItem(SEARCH_STORAGE_KEY, JSON.stringify(objArr))
+      //console.log(localStorage.getItem(SEARCH_STORAGE_KEY))
+      for (let i in productList) {
         let regexp = productList[i].name.toLowerCase()
-        if( productList[i].status === "active" 
-          && regexp.indexOf(keyWord) > -1){
+        if (productList[i].status === "active"
+          && regexp.indexOf(keyWord) > -1) {
           newProductList.push(productList[i])
         }
       }
-      setProductList(newProductList)
+      if (newProductList.length === 0) {
+        setProductList(null)
+      } else {
+        setProductList(newProductList)
+      }
     } else {
       fetchProduct()
-    } 
+    }
   }
 
   const fetchProduct = async () => {
@@ -56,16 +64,20 @@ function ProductList() {
 
   //등록하기
   const handleCreate = async (values) => {
-    console.log('Received values of form: ', values, image)
-    await postProduct(values, image)
+    let product_name = values.name
+    let exp_date = moment.utc(values.expiration_date)
+    //console.log('Received values of form: ', values, image)
+    await postProduct(product_name, image, exp_date)
     setVisible(false)
     fetchProduct()
   }
 
   //수정하기
   const handleModify = async (values, product_id) => {
-    console.log('Received values of form: ', values, image)
-    await modifyProduct(values, product_id, image)
+    let product_name = values.name
+    let exp_date = moment.utc(values.expiration_date)
+    //console.log('Received values of form: ', values, image)
+    await modifyProduct(product_id, product_name, image, exp_date)
     setVisible(false)
     fetchProduct()
   }
@@ -81,7 +93,7 @@ function ProductList() {
     <>
       <div>
         <Search
-          keyWord={handleSearch}
+          onChangekeyWord={handleSearch}
         />
 
         <Button
@@ -105,18 +117,17 @@ function ProductList() {
           }}
         />
       </div>
-      
+
       {/* UI수정 할 예정
       <img src={'images/statusUI.png'}  style={{ width: 100, height: 100 }}/> */}
 
       <Col xs={24} md={12}>
-        {productList &&
+        {productList ?
           productList
             .filter((item) => (item.status === "active"))
             .map((item, index) => (
-              <>
-                
-                <div key={item._id} style={{ display: 'inline-flex', border: '0.0625rem solid #D7E2EB', borderRadius: '0.25rem' }}>
+              <Fragment key={item._id}>
+                <div style={{ display: 'inline-flex', border: '0.0625rem solid #D7E2EB', borderRadius: '0.25rem' }}>
                   {
                     item.image_url ? <img src={`uploads/${item.image_url}`} style={{ width: 100, height: 100 }} /> :
                       <img src={'images/NoImage.png'} style={{ width: 100, height: 100 }} />
@@ -142,7 +153,7 @@ function ProductList() {
                     {productId &&
                       productId === item._id &&
                       <ModalLayout
-                        key={item._id} 
+                        key={item._id}
                         visible={visible}
                         title="Modify Product"
                         cancelText="Cancel"
@@ -170,8 +181,9 @@ function ProductList() {
 
                   </div>
                 </div>
-              </>
+              </Fragment>
             ))
+          : <img src={'images/NoImage.png'} style={{ width: 100, height: 100 }} />  /*이미지 변경 필요*/
         }
       </Col>
     </>

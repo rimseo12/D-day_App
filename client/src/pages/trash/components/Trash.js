@@ -1,6 +1,6 @@
 import { Table, Button, message } from 'antd'
 import React, { useEffect, useState } from 'react'
-import { getProducts, deleteForever, deleteIndividual, moveToHome } from '../../../api/Product'
+import { getProducts, deleteForever, deleteIndividual, moveToHome } from '../../../api/product'
 import moment from 'moment'
 
 function TrashList() {
@@ -11,22 +11,22 @@ function TrashList() {
 
   useEffect(() => {
     fetchProduct()
-  },[])
+  }, [])
 
-  const fetchProduct = async() => {
+  const fetchProduct = async () => {
     const productObject = await getProducts()
     setTrashList(productObject.data)
   }
 
   const columns = [
     {
-      title:'Product',
+      title: 'Product',
       render: item => {
         return (
-          <div style={{ display: 'flex'}}>
-            { item.hasOwnProperty('image_url')? 
-                <img src={`uploads/${item.image_url}`} style={{ height: 100 }} />
-                : <img src={'images/NoImage.png'} style={{ height: 100 }} /> 
+          <div style={{ display: 'flex' }}>
+            { item.hasOwnProperty('image_url') ?
+              <img src={`uploads/${item.image_url}`} style={{ height: 100 }} />
+              : <img src={'images/NoImage.png'} style={{ height: 100 }} />
             }
             <div>
               <div style={{ marginBottom: 5, fontWeight: 'bold' }}>{item.name}</div>
@@ -50,7 +50,7 @@ function TrashList() {
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setSelectedRowKeys(selectedRowKeys)
-      if(selectedRows.length !== 0 ) {
+      if (selectedRows.length !== 0) {
         setChecked(false)
       } else {
         setChecked(true)
@@ -58,52 +58,52 @@ function TrashList() {
       console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     }
   }
- 
-  const handleDeleteIndividual = async(e) => {
+
+  const handleDeleteIndividual = async (e) => {
     const product_id = e.target.parentNode.id
     await deleteIndividual(product_id)
     message.success('deleted forever')
     fetchProduct()
   }
 
-  const handleDeleteForever = async() => {
+  const handleDeleteForever = async () => {
     await deleteForever(selectedRowKeys)
     message.success('deleted forever')
     fetchProduct()
   }
 
-  const handleMoveToHome = async() => {
+  const handleMoveToHome = async () => {
     await moveToHome(selectedRowKeys)
     message.info('moved to home')
     fetchProduct()
   }
 
-  return(
+  return (
     <div>
       <div style={{ marginBottom: 16, display: 'flex' }}>
-        <Button 
+        <Button
           type="link"
-          onClick={() =>{ handleDeleteForever()}}
+          onClick={() => { handleDeleteForever() }}
           disabled={checked}
         >
           Delete forever
         </Button>
-        <Button 
+        <Button
           type="link"
-          onClick={() =>{ handleMoveToHome()}}
+          onClick={() => { handleMoveToHome() }}
           disabled={checked}
         >
           Move to home
         </Button>
       </div>
-      <Table 
+      <Table
         rowSelection={rowSelection}
         columns={columns}
         rowKey={'_id'}
-        dataSource={trashList && 
+        dataSource={trashList &&
           trashList
-          .filter((item) => (item.status === "inactive"))        
-        } 
+            .filter((item) => (item.status === "inactive"))
+        }
       />
     </div>
   )
