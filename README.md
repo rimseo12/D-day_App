@@ -37,15 +37,19 @@ exp-tracker\client > npm start
 ## 컴포넌트 구조
 
 핵심 컴포넌트 관계도를 정의했습니다.
-
-- /pages/home/components/Home.js
-- /pages/home/components/shared/
+- /api/
+  - config.js
+  - product.js
+- /pages/home/Home.js
+- /pages/home/components/
+  - ModalLayout.js
   - ProductList.js
   - SearchInput.js
-  - ModalLayout.js
 - /pages/menu/
   - LeftMenu.js
-- /pages/sub/components/TrashList.js
+- /pages/trash/components/Trash.js
+- /util/
+  - debounce.js
 
 ## 주요 흐름
 
