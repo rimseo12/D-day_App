@@ -1,13 +1,21 @@
 import React, { useState, useEffect, Fragment } from 'react'
-import { Button, Col, Divider, Popconfirm, message } from 'antd'
+import { Button, Col, Divider, Popconfirm, message, List, Avatar, Skeleton, Row } from 'antd'
+import styled from 'styled-components'
 import { getProducts, uploadProductImage, postProduct, modifyProduct, deleteProduct } from '../../../api/product'
 import ModalLayout from './ModalLayout'
 import moment from 'moment'
 import Search from './SearchInput'
 
+const ListCustomize = styled(List)`
+.ant-list-item-meta-content{
+  align-self: center;
+};
+`;
+
 function ProductList() {
 
   const [productList, setProductList] = useState([])
+  const [newProductList, setNewProductList] = useState([])
   const [visible, setVisible] = useState(false)
   const [productId, setProductId] = useState(null)
   const [productName, setProductName] = useState(null)
@@ -19,28 +27,19 @@ function ProductList() {
     fetchProduct()
   }, [])
 
-  let objArr = []
-  let newProductList = []
+  let newList = []
   const handleSearch = (keyWord) => {
     if (keyWord !== undefined && keyWord.trim('') !== "") {
-      objArr.push(keyWord)
-      console.log(objArr)
-      //window.localStorage.setItem(SEARCH_STORAGE_KEY, JSON.stringify(objArr))
-      //console.log(localStorage.getItem(SEARCH_STORAGE_KEY))
       for (let i in productList) {
-        let regexp = productList[i].name.toLowerCase()
+        let nameToLowerCase = productList[i].name.toLowerCase()
         if (productList[i].status === "active"
-          && regexp.indexOf(keyWord) > -1) {
-          newProductList.push(productList[i])
+          && nameToLowerCase.indexOf(keyWord) > -1) {
+          newList.push(productList[i])
         }
       }
-      if (newProductList.length === 0) {
-        setProductList(null)
-      } else {
-        setProductList(newProductList)
-      }
+      setNewProductList(newList)
     } else {
-      fetchProduct()
+      setNewProductList(productList)
     }
   }
 
@@ -91,37 +90,114 @@ function ProductList() {
 
   return (
     <>
-      <div>
-        <Search
-          onChangekeyWord={handleSearch}
+      <Search
+        onChangekeyWord={handleSearch}
+      />
+
+      <Button
+        type="primary"
+        onClick={() => {
+          setVisible(true)
+        }}
+        style={{ float: 'right' }}
+      >
+        Add Product
+      </Button>
+      <ModalLayout
+        visible={visible}
+        title="Add Prodcut"
+        okText="Create"
+        cancelText="Cancel"
+        onUpload={handleUpload}
+        onCreate={handleCreate}
+        onCancel={() => {
+          setVisible(false)
+        }}
+      />
+      <img src={'images/statusUI.png'} style={{ width: 100, height: 100 }} />
+      <br></br>
+      <br></br>
+      <ListCustomize>
+        <List
+          className="demo-loadmore-list"
+          itemLayout="horizontal"
+          dataSource={
+            newProductList.length > 0 ? newProductList : productList
+          }
+          renderItem={item => (
+            item.status === "active" &&
+            <List.Item
+              actions={[
+                <>
+                  <Button
+                    type="link"
+                    onClick={() => {
+                      setProductId(item._id)
+                      setProductName(item.name)
+                      setProductImage(item.image_url)
+                      setProductExp(item.expiration_date)
+                      setVisible(true)
+                    }}
+                  >
+                    Modify
+                </Button>
+                  {productId &&
+                    productId === item._id &&
+                    <ModalLayout
+                      key={item._id}
+                      visible={visible}
+                      title="Modify Product"
+                      cancelText="Cancel"
+                      okText="Modify"
+                      product_id={productId}
+                      productName={productName}
+                      productImage={productImage}
+                      productExp={productExp}
+                      onUpload={handleUpload}
+                      onModify={handleModify}
+                      onCancel={() => {
+                        setVisible(false)
+                      }}
+                    />
+                  }
+                </>
+                ,
+                <Popconfirm
+                  title="Are you sure to delete this item?"
+                  onConfirm={() => { handleDeleteFromList(item._id) }}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button type="link">delete</Button>
+                </Popconfirm>
+              ]}
+            >
+
+              <List.Item.Meta
+                avatar={
+                  item.image_url ?
+                    <img
+                      width={230}
+                      alt="logo"
+                      src={`uploads/${item.image_url}`}
+                    /> :
+                    <img
+                      width={230}
+                      alt="noImage"
+                      src={'images/NoImage.png'}
+                    />
+                }
+                title={item.name}
+                description={moment(item.expiration_date).format(dateFormat)}
+              />
+
+            </List.Item>
+          )}
         />
+      </ListCustomize>
 
-        <Button
-          type="primary"
-          onClick={() => {
-            setVisible(true)
-          }}
-          style={{ float: 'right' }}
-        >
-          Add Product
-          </Button>
-        <ModalLayout
-          visible={visible}
-          title="Add Prodcut"
-          okText="Create"
-          cancelText="Cancel"
-          onUpload={handleUpload}
-          onCreate={handleCreate}
-          onCancel={() => {
-            setVisible(false)
-          }}
-        />
-      </div>
 
-      {/* UI수정 할 예정
-      <img src={'images/statusUI.png'}  style={{ width: 100, height: 100 }}/> */}
-
-      <Col xs={24} md={12}>
+      {/* <Col xs={24} xl={8}>
         {productList ?
           productList
             .filter((item) => (item.status === "active"))
@@ -183,9 +259,9 @@ function ProductList() {
                 </div>
               </Fragment>
             ))
-          : <img src={'images/NoImage.png'} style={{ width: 100, height: 100 }} />  /*이미지 변경 필요*/
+          : <img src={'images/NoImage.png'} style={{ width: 100, height: 100 }} />  
         }
-      </Col>
+      </Col> */}
     </>
   )
 }

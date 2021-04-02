@@ -1,44 +1,38 @@
 import './App.css'
 import React, { Suspense, useState, useEffect } from 'react'
 import { Route, Switch } from 'react-router-dom'
-import { Layout, Avatar, Badge } from 'antd'
+import { Layout, Avatar, Badge, Row, Col } from 'antd'
 import { UserOutlined } from '@ant-design/icons'
 import styled, { createGlobalStyle } from 'styled-components'
 import Home from './pages/home/Home'
 import Trash from './pages/trash/components/Trash'
 import LeftMenu from './pages/menu/LeftMenu'
 import moment from 'moment'
-import { getProducts } from './api/product'
 
-const calcWidthPercent = span => {
-  if (!span) return;
-
-  const width = (span / 12) * 100;
-  return width;
-};
-
-const BREAK_POINT_MOBILE = 768;
-const BREAK_POINT_TABLET = 992;
-const BREAK_POINT_PC = 1200;
-
-const Global = createGlobalStyle`
-.ant-layout-sider-children {
-  float: left;
-  minHeight: '100vh';
-  width: ${({ xs }) => (xs ? `${calcWidthPercent(xs)}%` : `100%`)};
-  padding: 1rem;
-
-  @media only screen and (min-width: ${BREAK_POINT_MOBILE}px) {
-    width: ${({ sm }) => sm && `${calcWidthPercent(sm)}%`};
-  }
-  @media only screen and (min-width: ${BREAK_POINT_TABLET}px) {
-    width: ${({ md }) => md && `${calcWidthPercent(md)}%`};
-  }
-  @media only screen and (min-width: ${BREAK_POINT_PC}px) {
-    width: ${({ lg }) => lg && `${calcWidthPercent(lg)}%`};
-  }
+const AppContainer = styled.div`
+* {
+  box-sizing: border-box;
 }
 `;
+const HeaderContainer = styled.div`
+  padding: 1 rem;
+  border: 1px soild red;
+`;
+const ListWrapper = styled.div`
+  width: 20%;
+  float: left;
+  padding: 15px;
+  margin-left: 15px;
+  border: 1px solid red;
+`;
+// Main 컴포넌트
+const Main = styled.div`
+  width: 70%;
+  float: left;
+  padding: 15px;
+  border: 1px solid red;
+`;
+
 
 function App() {
   const { Header, Footer, Sider, Content } = Layout
@@ -68,35 +62,40 @@ function App() {
   // }
 
   return (
-    <div className="App">
-      <Layout>
-        {/* <Global> */}
-        <Sider>
-          <div>Logo</div>
-          <div><LeftMenu /></div>
-        </Sider>
-        {/* </Global> */}
-
-        <Layout>
-          <Header style={{ background: '#f0f2f5', textAlign: 'right', padding: 0, marginRight: 18, borderBottom: 'groove' }}>
-            header
+    <AppContainer>
+      <div className="App">
+        <HeaderContainer>
+          <div>
             <Badge count={count}>
               <Avatar icon={<UserOutlined />} />
             </Badge>
-          </Header>
-          <Content style={{ textAlign: '-webkit-center', margin: '24px 16px 0' }}>
+          </div>
+        </HeaderContainer>
+        <ListWrapper>
+          <div>
+            <LeftMenu />
+          </div>
+        </ListWrapper>
+        <Main>
+          <div>
             <Suspense fallback={(<div>Loading...</div>)}>
               <Switch>
                 <Route exact path="/" component={Home} />
                 <Route exact path="/trash" component={Trash} />
               </Switch>
             </Suspense>
-          </Content>
-          <Footer style={{ textAlign: 'center' }}>Created by Seorim</Footer>
-        </Layout>
-
-      </Layout>
-    </div>
+          </div>
+        </Main>
+        {/* <Header style={{ background: '#f0f2f5', textAlign: 'right', padding: 0, marginRight: 18, borderBottom: 'groove' }}>
+            header
+            
+          </Header> */}
+        {/* <Content style={{ textAlign: '-webkit-center', margin: '24px 16px 0' }}>
+            
+          </Content> */}
+        {/* <Footer style={{ textAlign: 'center' }}>Created by Seorim</Footer> */}
+      </div>
+    </AppContainer>
   )
 }
 
