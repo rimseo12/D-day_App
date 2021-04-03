@@ -5,7 +5,7 @@ import styled from 'styled-components'
 const HistoryContainer = styled.div`
   padding: 18px;
   border: 0.0625rem solid #D7E2EB; 
-  borderRadius: 0.25rem;
+  border-radius: 0.25rem;
 `
 const HeaderContainer = styled.div`
   overflow: hidden;
@@ -35,7 +35,8 @@ const KeywordContainer = styled.li`
 `
 
 const RemoveButton = styled.button`
-  float: right;
+  //float: right;
+  margin-left: 10px;
   color: #0cde8b;
   border: 1px solid #0cde8b;
   padding: 3px 5px;

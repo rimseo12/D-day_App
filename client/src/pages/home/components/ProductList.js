@@ -6,10 +6,14 @@ import ModalLayout from './ModalLayout'
 import moment from 'moment'
 import Search from './SearchInput'
 
+const BREAK_POINT_MOBILE = 768;
+const BREAK_POINT_TABLET = 992;
+const BREAK_POINT_PC = 1200;
+
 const ListCustomize = styled(List)`
-.ant-list-item-meta-content{
-  align-self: center;
-};
+.ant-list-item-meta-title {
+  padding-top: 35px;
+}
 `;
 
 function ProductList() {
@@ -93,7 +97,7 @@ function ProductList() {
       <Search
         onChangekeyWord={handleSearch}
       />
-
+      <br></br>
       <Button
         type="primary"
         onClick={() => {
@@ -114,7 +118,7 @@ function ProductList() {
           setVisible(false)
         }}
       />
-      <img src={'images/statusUI.png'} style={{ width: 100, height: 100 }} />
+      {/* <img src={'images/statusUI.png'} style={{ width: 100, height: 100 }} /> 알림기능 완성 후 넣기 */}
       <br></br>
       <br></br>
       <ListCustomize>
