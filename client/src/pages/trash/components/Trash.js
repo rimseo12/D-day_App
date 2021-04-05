@@ -2,6 +2,32 @@ import { Table, Button, message } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { getProducts, deleteForever, deleteIndividual, moveToHome } from '../../../api/product'
 import moment from 'moment'
+import styled from 'styled-components'
+
+const HeaderContainer = styled.div`
+  margin-bottom: 16px;
+  display: flex;
+  .ant-btn {
+    align-self: flex-end;
+  }
+`;
+
+const ListWrapper = styled.div`
+  display: flex;
+
+  img {
+    height: 100px;
+  }
+`;
+
+const ProductInfo = styled.div`
+  margin-left: 10px;
+  align-self: center;
+  .product_name {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+`;
 
 function TrashList() {
   const [trashList, setTrashList] = useState([])
@@ -15,7 +41,9 @@ function TrashList() {
 
   const fetchProduct = async () => {
     const productObject = await getProducts()
-    setTrashList(productObject.data)
+    if (productObject.status === 200) {
+      setTrashList(productObject.data)
+    }
   }
 
   const columns = [
@@ -23,24 +51,23 @@ function TrashList() {
       title: 'Product',
       render: item => {
         return (
-          <div style={{ display: 'flex' }}>
+          <ListWrapper>
             { item.hasOwnProperty('image_url') ?
-              <img src={`uploads/${item.image_url}`} style={{ height: 100 }} />
-              : <img src={'images/NoImage.png'} style={{ height: 100 }} />
+              <img src={`uploads/${item.image_url}`} />
+              : <img src={'images/NoImage.png'} />
             }
-            <div>
-              <div style={{ marginBottom: 5, fontWeight: 'bold' }}>{item.name}</div>
+            <ProductInfo>
+              <div className="product_name">{item.name}</div>
               <div>{moment(item.expiration_date).format(dateFormat)}</div>
-            </div>
+            </ProductInfo>
             <Button
               id={item._id}
               type="link"
               onClick={handleDeleteIndividual}
-              style={{ marginTop: 20 }}
             >
               Delete forever
             </Button>
-          </div>
+          </ListWrapper>
 
         )
       }
@@ -80,7 +107,7 @@ function TrashList() {
 
   return (
     <div>
-      <div style={{ marginBottom: 16, display: 'flex' }}>
+      <HeaderContainer>
         <Button
           type="link"
           onClick={() => { handleDeleteForever() }}
@@ -95,7 +122,8 @@ function TrashList() {
         >
           Move to home
         </Button>
-      </div>
+      </HeaderContainer>
+
       <Table
         rowSelection={rowSelection}
         columns={columns}

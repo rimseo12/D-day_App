@@ -11,16 +11,27 @@ const BREAK_POINT_TABLET = 992;
 const BREAK_POINT_PC = 1200;
 
 const ListCustomize = styled(List)`
-.ant-list-item-meta-title {
-  padding-top: 35px;
-}
+  .ant-list-item-meta-content {
+    align-self: center;
+  }
+  .ant-list-item-meta-avatar img {
+    width: 233px;
+    height: 200px;
+  }
+`;
+const CreateButton = styled.div`
+  button {
+    float: right;
+  }
 `;
 
-function ProductList() {
 
+
+function ProductList() {
   const [productList, setProductList] = useState([])
   const [newProductList, setNewProductList] = useState([])
-  const [visible, setVisible] = useState(false)
+  const [visibleCreate, setVisibleCreate] = useState(false)
+  const [visibleModify, setVisibleModify] = useState(false)
   const [productId, setProductId] = useState(null)
   const [productName, setProductName] = useState(null)
   const [productImage, setProductImage] = useState(null)
@@ -33,18 +44,20 @@ function ProductList() {
 
   let newList = []
   const handleSearch = (keyWord) => {
-    if (keyWord !== undefined && keyWord.trim('') !== "") {
-      for (let i in productList) {
-        let nameToLowerCase = productList[i].name.toLowerCase()
-        if (productList[i].status === "active"
-          && nameToLowerCase.indexOf(keyWord) > -1) {
-          newList.push(productList[i])
-        }
+    //if (keyWord !== undefined && keyWord.trim('') !== "") {
+    for (let i in productList) {
+      let nameToLowerCase = productList[i].name.toLowerCase()
+      if (productList[i].status === "active"
+        && nameToLowerCase.indexOf(keyWord) > -1) {
+        newList.push(productList[i])
       }
-      setNewProductList(newList)
-    } else {
-      setNewProductList(productList)
     }
+    setNewProductList(newList)
+    if (newList.length === 0) {
+      alert("검색 결과가 없습니다.")
+    }
+    console.log("test:", newList)
+    //}
   }
 
   const fetchProduct = async () => {
@@ -55,7 +68,7 @@ function ProductList() {
 
   let image = null
   const handleUpload = (e) => {
-    if (e.target.id === "image_url") {
+    if (e.target.id === "img_url") {
       fetchUpload(e.target.files[0])
     }
   }
@@ -71,7 +84,7 @@ function ProductList() {
     let exp_date = moment.utc(values.expiration_date)
     //console.log('Received values of form: ', values, image)
     await postProduct(product_name, image, exp_date)
-    setVisible(false)
+    setVisibleCreate(false)
     fetchProduct()
   }
 
@@ -81,7 +94,7 @@ function ProductList() {
     let exp_date = moment.utc(values.expiration_date)
     //console.log('Received values of form: ', values, image)
     await modifyProduct(product_id, product_name, image, exp_date)
-    setVisible(false)
+    setVisibleModify(false)
     fetchProduct()
   }
 
@@ -98,35 +111,39 @@ function ProductList() {
         onChangekeyWord={handleSearch}
       />
       <br></br>
-      <Button
-        type="primary"
-        onClick={() => {
-          setVisible(true)
-        }}
-        style={{ float: 'right' }}
-      >
-        Add Product
+      <CreateButton>
+        <Button
+          type="primary"
+          onClick={() => {
+            setVisibleCreate(true)
+          }}
+        >
+          Add Product
       </Button>
+      </CreateButton>
+
       <ModalLayout
-        visible={visible}
+        visible={visibleCreate}
         title="Add Prodcut"
         okText="Create"
         cancelText="Cancel"
         onUpload={handleUpload}
         onCreate={handleCreate}
         onCancel={() => {
-          setVisible(false)
+          setVisibleCreate(false)
         }}
       />
+
       {/* <img src={'images/statusUI.png'} style={{ width: 100, height: 100 }} /> 알림기능 완성 후 넣기 */}
       <br></br>
       <br></br>
+
       <ListCustomize>
         <List
           className="demo-loadmore-list"
           itemLayout="horizontal"
           dataSource={
-            newProductList.length > 0 ? newProductList : productList
+            newProductList.length === 0 ? productList : newProductList
           }
           renderItem={item => (
             item.status === "active" &&
@@ -140,16 +157,19 @@ function ProductList() {
                       setProductName(item.name)
                       setProductImage(item.image_url)
                       setProductExp(item.expiration_date)
-                      setVisible(true)
+                      setVisibleModify(true)
+                      console.log("NewDate:", item.expiration_date)
                     }}
                   >
                     Modify
                 </Button>
                   {productId &&
                     productId === item._id &&
+                    productName === item.name &&
+
                     <ModalLayout
                       key={item._id}
-                      visible={visible}
+                      visible={visibleModify}
                       title="Modify Product"
                       cancelText="Cancel"
                       okText="Modify"
@@ -160,7 +180,7 @@ function ProductList() {
                       onUpload={handleUpload}
                       onModify={handleModify}
                       onCancel={() => {
-                        setVisible(false)
+                        setVisibleModify(false)
                       }}
                     />
                   }
@@ -181,12 +201,10 @@ function ProductList() {
                 avatar={
                   item.image_url ?
                     <img
-                      width={230}
                       alt="logo"
                       src={`uploads/${item.image_url}`}
                     /> :
                     <img
-                      width={230}
                       alt="noImage"
                       src={'images/NoImage.png'}
                     />
@@ -199,73 +217,6 @@ function ProductList() {
           )}
         />
       </ListCustomize>
-
-
-      {/* <Col xs={24} xl={8}>
-        {productList ?
-          productList
-            .filter((item) => (item.status === "active"))
-            .map((item, index) => (
-              <Fragment key={item._id}>
-                <div style={{ display: 'inline-flex', border: '0.0625rem solid #D7E2EB', borderRadius: '0.25rem' }}>
-                  {
-                    item.image_url ? <img src={`uploads/${item.image_url}`} style={{ width: 100, height: 100 }} /> :
-                      <img src={'images/NoImage.png'} style={{ width: 100, height: 100 }} />
-                  }
-
-                  <div style={{ marginLeft: 97 }}>
-                    <div style={{ marginTop: 10, marginBottom: 33, fontWeight: 'bold' }}>{item.name}</div>
-                    <div>{moment(item.expiration_date).format(dateFormat)}</div>
-                  </div>
-                  <div style={{ marginTop: 60 }}>
-                    <Button
-                      type="link"
-                      onClick={() => {
-                        setProductId(item._id)
-                        setProductName(item.name)
-                        setProductImage(item.image_url)
-                        setProductExp(item.expiration_date)
-                        setVisible(true)
-                      }}
-                    >
-                      Modify
-                    </Button>
-                    {productId &&
-                      productId === item._id &&
-                      <ModalLayout
-                        key={item._id}
-                        visible={visible}
-                        title="Modify Product"
-                        cancelText="Cancel"
-                        okText="Modify"
-                        product_id={productId}
-                        productName={productName}
-                        productImage={productImage}
-                        productExp={productExp}
-                        onUpload={handleUpload}
-                        onModify={handleModify}
-                        onCancel={() => {
-                          setVisible(false)
-                        }}
-                      />
-                    }
-
-                    <Popconfirm
-                      title="Are you sure to delete this item?"
-                      onConfirm={() => { handleDeleteFromList(item._id) }}
-                      okText="Yes"
-                      cancelText="No"
-                    >
-                      <Button type="link">delete</Button>
-                    </Popconfirm>
-
-                  </div>
-                </div>
-              </Fragment>
-            ))
-          : <img src={'images/NoImage.png'} style={{ width: 100, height: 100 }} />  
-        }
-      </Col> */}
     </>
   )
 }

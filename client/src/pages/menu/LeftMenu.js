@@ -29,8 +29,6 @@ function LeftMenu() {
         <Menu
           onClick={handleClick}
           selectedKeys={Current}
-        //  style={{ width: 256 }}
-        //mode="inline"
         >
 
           <Menu.Item key="home">

@@ -1,7 +1,8 @@
 import React, { Fragment } from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
-import { HomeTwoTone, DeleteTwoTone } from '@ant-design/icons'
+import { Button } from 'antd'
+import { HomeTwoTone, DeleteTwoTone, MenuFoldOutlined } from '@ant-design/icons'
 
 const SideMenu = styled.div`
 .side-menu-button {
@@ -12,7 +13,6 @@ const SideMenu = styled.div`
     display: block;
   }
 }
-
 .side-menu-button {
   position: absolute;
   top: 20px;
@@ -22,7 +22,6 @@ const SideMenu = styled.div`
 .side-menu-button .img-box {
   width: 50px;
 }
-
 .side-menu-button:hover .side-menu-bar {
   left: 0;
 }
@@ -67,7 +66,9 @@ function MobileLeftMenu() {
     <SideMenu>
       <div className="side-menu-button">
         <div className="img-box">
-          <img style={{ width: '85%' }} src="images/hamburger.png" alt="menu" />
+          <Button type="primary">
+            <MenuFoldOutlined />
+          </Button>
         </div>
         <div className="side-menu-bar">
           <nav className="side-menu-box">

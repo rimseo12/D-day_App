@@ -2,11 +2,18 @@ import { useEffect, useState, Fragment } from "react"
 import { Input } from 'antd'
 import debounce from '../../../util/debounce'
 import SearchHistory from './SearchHistory'
+import styled from 'styled-components'
+
+const InputSearch = styled.div`
+  .ant-input-group-wrapper {
+    margin-bottom: 10px;
+  }
+`;
 
 const SEARCH_STORAGE_KEY = 'keywords'
 function Search({ onChangekeyWord }) {
   const [keyWords, setKeyWords] = useState(
-    JSON.parse(localStorage.getItem(SEARCH_STORAGE_KEY) || [])
+    JSON.parse(localStorage.getItem(SEARCH_STORAGE_KEY)) || []
   )
 
   //검색에 변화가 일어날때만 렌더링
@@ -36,8 +43,7 @@ function Search({ onChangekeyWord }) {
   }
 
   const handleQuickSearch = (text) => {
-    console.log(text)
-    //document.querySelector('.ant-input').value = text
+    //console.log(text)
     onChangekeyWord(text)
   }
 
@@ -57,13 +63,15 @@ function Search({ onChangekeyWord }) {
 
   return (
     <Fragment>
-      <Input.Search
-        size="large"
-        placeholder="Search here"
-        enterButton
-        style={{ marginBottom: 10 }}
-        onKeyUp={handleGetKeyword}
-      />
+      <InputSearch>
+        <Input.Search
+          size="large"
+          placeholder="Search here"
+          enterButton
+          onKeyUp={handleGetKeyword}
+        />
+      </InputSearch>
+
       <SearchHistory
         keywords={keyWords}
         onQuickSearch={handleQuickSearch}
