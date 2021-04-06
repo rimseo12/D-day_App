@@ -10,7 +10,9 @@ const InputSearch = styled.div`
   }
 `;
 
+const ENTER_KEY_CODE = 'Enter'
 const SEARCH_STORAGE_KEY = 'keywords'
+
 function Search({ onChangekeyWord }) {
   const [keyWords, setKeyWords] = useState(
     JSON.parse(localStorage.getItem(SEARCH_STORAGE_KEY)) || []
@@ -21,35 +23,47 @@ function Search({ onChangekeyWord }) {
     localStorage.setItem(SEARCH_STORAGE_KEY, JSON.stringify(keyWords))
   }, [keyWords])
 
+  const handleSearch = (val) => {
+    if (val.trim() !== "") {
+      const newKeyWord = {
+        id: Date.now(),
+        text: val
+      }
+      setKeyWords([newKeyWord, ...keyWords])
+      onChangekeyWord(val)
+    } else {
+      onChangekeyWord(val)
+    }
+  }
+
   const handleGetKeyword = (e) => {
     debounce(() => {
       //로컬 저장소에 검색어 누적 저장 
       //빈값은 저장하지 않기
       let currentKeyWord = e.target.value
-      if (currentKeyWord.trim() !== "") {
-        const newKeyWord = {
-          id: Date.now(),
-          text: currentKeyWord
+      if (e.key === ENTER_KEY_CODE) {
+        if (currentKeyWord.trim() !== "") {
+          const newKeyWord = {
+            id: Date.now(),
+            text: currentKeyWord
+          }
+          setKeyWords([newKeyWord, ...keyWords])
+
+          onChangekeyWord(currentKeyWord)
+        } else {
+          onChangekeyWord(currentKeyWord)
         }
-        console.log("검색값:", newKeyWord)
-        setKeyWords([newKeyWord, ...keyWords])
-
-        onChangekeyWord(currentKeyWord)
-      } else {
-        onChangekeyWord(currentKeyWord)
       }
-
     }, 1000)
   }
 
   const handleQuickSearch = (text) => {
-    //console.log(text)
     onChangekeyWord(text)
+
   }
 
   //검색어 삭제
   const handleRemoveKeyword = (id) => {
-    console.log(id)
     const nextKeyWord = keyWords.filter((thisKeyword) => {
       return thisKeyword.id != id
     })
@@ -65,10 +79,12 @@ function Search({ onChangekeyWord }) {
     <Fragment>
       <InputSearch>
         <Input.Search
+          allowClear
           size="large"
           placeholder="Search here"
           enterButton
           onKeyUp={handleGetKeyword}
+          onSearch={handleSearch}
         />
       </InputSearch>
 
