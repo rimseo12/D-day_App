@@ -1,14 +1,16 @@
 import React, { useState, useEffect, Fragment } from 'react'
-import { Button, Col, Divider, Popconfirm, message, List, Avatar, Skeleton, Row } from 'antd'
+import { Button, Popconfirm, message, List } from 'antd'
 import styled from 'styled-components'
 import { getProducts, uploadProductImage, postProduct, modifyProduct, deleteProduct } from '../../../api/product'
 import ModalLayout from './ModalLayout'
 import moment from 'moment'
 import Search from './SearchInput'
 
-const BREAK_POINT_MOBILE = 768;
-const BREAK_POINT_TABLET = 992;
-const BREAK_POINT_PC = 1200;
+/*
+TODO LIST
+-알림 기능 구현 후에 이미지 태그 주석된 거 풀기
+-D-day 별로 리스트에 아이콘 표시하기 
+*/
 
 const ListCustomize = styled(List)`
   .ant-list-item-meta-content {
@@ -18,18 +20,24 @@ const ListCustomize = styled(List)`
     width: 233px;
     height: 200px;
   }
-`;
+`
+const RefrashButton = styled.div`
+  margin-top: 1rem;
+  button {
+    float: left;
+  }
+`
 const CreateButton = styled.div`
+  margin-top: 1rem;
+  margin-bottom: 3rem;
   button {
     float: right;
   }
-`;
-
-
-
+`
 function ProductList() {
   const [productList, setProductList] = useState([])
-  const [newProductList, setNewProductList] = useState([])
+  const [searchResult, setSearchResult] = useState([])
+  const [isSearching, setIsSearching] = useState(false)
   const [visibleCreate, setVisibleCreate] = useState(false)
   const [visibleModify, setVisibleModify] = useState(false)
   const [productId, setProductId] = useState(null)
@@ -37,32 +45,38 @@ function ProductList() {
   const [productImage, setProductImage] = useState(null)
   const [productExp, setProductExp] = useState(null)
   const dateFormat = 'YYYY/MM/DD'
+  let newList = []
 
   useEffect(() => {
     fetchProduct()
   }, [])
 
-  let newList = []
   const handleSearch = (keyWord) => {
-    //if (keyWord !== undefined && keyWord.trim('') !== "") {
+    setIsSearching(true)
     for (let i in productList) {
       let nameToLowerCase = productList[i].name.toLowerCase()
-      if (productList[i].status === "active"
-        && nameToLowerCase.indexOf(keyWord) > -1) {
+      if (nameToLowerCase.indexOf(keyWord) > -1) {
         newList.push(productList[i])
       }
     }
-    setNewProductList(newList)
     if (newList.length === 0) {
-      alert("검색 결과가 없습니다.")
+      setSearchResult([])
+    } else {
+      setSearchResult(newList)
     }
-    //}
   }
 
   const fetchProduct = async () => {
-    const productObject = await getProducts()
-    setProductList(productObject.data)
-    console.log(productObject.data)
+    try {
+      const productObject = await getProducts()
+      if (productObject.status === 200) {
+        setProductList(productObject.data.filter(item => item.status === "active"))
+      } else {
+        throw new Error(`status code: ${productObject.status}`)
+      }
+    } catch (error) {
+      throw new Error(`서버 통신 중 에러 발생: ${error.message}`)
+    }
   }
 
   let image = null
@@ -71,45 +85,82 @@ function ProductList() {
       fetchUpload(e.target.files[0])
     }
   }
+
   const fetchUpload = async (fileName) => {
     const formData = new FormData()
-    formData.append("imageName", fileName) //name === route/index.js single()함수 파라미터 
-    image = await uploadProductImage(formData)
+    formData.append("imageName", fileName) //name === route/index.js single()함수 파라미터
+    try {
+      image = await uploadProductImage(formData)
+    } catch (error) {
+      throw new Error(`서버 통신 중 에러 발생: ${error.message}`)
+    }
   }
 
   //등록하기
   const handleCreate = async (values) => {
-    let product_name = values.name
-    let exp_date = moment.utc(values.expiration_date)
-    //console.log('Received values of form: ', values, image)
-    await postProduct(product_name, image, exp_date)
-    setVisibleCreate(false)
-    fetchProduct()
+    let productName = values.name
+    let expDate = moment.utc(values.expiration_date)
+    try {
+      const res = await postProduct(productName, image, expDate)
+      if (res.status === 200) {
+        setVisibleCreate(false)
+        fetchProduct()
+      } else {
+        throw new Error(`status code: ${res.status}`)
+      }
+    } catch (error) {
+      throw new Error(`서버 통신 중 에러 발생: ${error.message}`)
+    }
   }
 
   //수정하기
   const handleModify = async (values, product_id) => {
-    let product_name = values.name
-    let exp_date = moment.utc(values.expiration_date)
-    //console.log('Received values of form: ', values, image)
-    await modifyProduct(product_id, product_name, image, exp_date)
-    setVisibleModify(false)
-    fetchProduct()
+    let productName = values.name
+    let expDate = moment.utc(values.expiration_date)
+    try {
+      const res = await modifyProduct(product_id, productName, image, expDate)
+      if (res.status === 200) {
+        setVisibleModify(false)
+        fetchProduct()
+      } else {
+        throw new Error(`status code: ${res.status}`)
+      }
+    } catch (error) {
+      throw new Error(`서버 통신 중 에러 발생: ${error.message}`)
+    }
   }
 
   //삭제하기
   const handleDeleteFromList = async (product_id) => {
-    const res = await deleteProduct(product_id)
-    message.success('moved to Trash')
-    fetchProduct()
+    try {
+      const res = await deleteProduct(product_id)
+      if (res.status === 200) {
+        message.success('moved to Trash')
+        fetchProduct()
+      } else {
+        throw new Error(`status code: ${res.status}`)
+      }
+    } catch (error) {
+      throw new Error(`서버 통신 중 에러 발생: ${error.message}`)
+    }
   }
-
   return (
-    <>
+    <Fragment>
       <Search
         onChangekeyWord={handleSearch}
       />
-      <br></br>
+      {isSearching &&
+        <RefrashButton>
+          <Button
+            type="primary"
+            onClick={() => {
+              window.location.replace("/")
+            }}
+          >
+            Refresh
+          </Button>
+        </RefrashButton>
+      }
       <CreateButton>
         <Button
           type="primary"
@@ -134,48 +185,36 @@ function ProductList() {
       />
 
       {/* <img src={'images/statusUI.png'} style={{ width: 100, height: 100 }} /> 알림기능 완성 후 넣기 */}
-      <br></br>
-      <br></br>
 
       <ListCustomize>
         <List
           className="demo-loadmore-list"
           itemLayout="horizontal"
           dataSource={
-            newProductList.length === 0 ? productList : newProductList
+            isSearching ? searchResult : productList
           }
           renderItem={item => (
-            item.status === "active" &&
             <List.Item
               actions={[
-                <>
+                <Fragment>
                   <Button
                     type="link"
                     onClick={() => {
                       setProductId(item._id)
-                      setProductName(item.name)
-                      setProductImage(item.image_url)
-                      setProductExp(item.expiration_date)
                       setVisibleModify(true)
-                      console.log("NewDate:", item.expiration_date)
                     }}
                   >
                     Modify
-                </Button>
-                  {productId &&
-                    productId === item._id &&
-                    productName === item.name &&
+                  </Button>
 
-                    <ModalLayout
+                  {productId === item._id
+                    && <ModalLayout
                       key={item._id}
                       visible={visibleModify}
                       title="Modify Product"
                       cancelText="Cancel"
                       okText="Modify"
-                      product_id={productId}
-                      productName={productName}
-                      productImage={productImage}
-                      productExp={productExp}
+                      productDetail={item}
                       onUpload={handleUpload}
                       onModify={handleModify}
                       onCancel={() => {
@@ -183,7 +222,7 @@ function ProductList() {
                       }}
                     />
                   }
-                </>
+                </Fragment>
                 ,
                 <Popconfirm
                   title="Are you sure to delete this item?"
@@ -195,28 +234,22 @@ function ProductList() {
                 </Popconfirm>
               ]}
             >
-
               <List.Item.Meta
                 avatar={
-                  item.image_url ?
-                    <img
-                      alt="logo"
-                      src={`uploads/${item.image_url}`}
-                    /> :
-                    <img
-                      alt="noImage"
-                      src={'images/NoImage.png'}
-                    />
+                  item.image_url
+                    ? <img alt="logo" src={`uploads/${item.image_url}`} />
+                    : <img alt="noImage" src={'images/NoImage.png'} />
                 }
                 title={item.name}
                 description={moment(item.expiration_date).format(dateFormat)}
               />
-
             </List.Item>
           )}
         />
       </ListCustomize>
-    </>
+
+
+    </Fragment>
   )
 }
 

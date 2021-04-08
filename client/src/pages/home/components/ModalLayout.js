@@ -8,25 +8,20 @@ const ImgCustomize = styled.div`
     width: 100px;
     height: 100px;
   }
-`;
-
-const CreateForm = ({
+`
+function CreateForm({
   title,
   okText,
   cancelText,
-  product_id,
-  productName,
-  productImage,
-  productExp,
+  productDetail,
   visible,
   onCreate,
   onCancel,
   onUpload,
-  onModify }) => {
+  onModify
+}) {
   const [form] = Form.useForm()
   const dateFormat = 'YYYY/MM/DD'
-  //const newDateFormat = moment(productExp).format(dateFormat)
-
   return (
     <Modal
       visible={visible}
@@ -45,12 +40,10 @@ const CreateForm = ({
           .validateFields()
           .then((values) => {
             form.resetFields()
-            if (product_id) {
-              //console.log(values)
-              onModify(values, product_id)
+            if (productDetail) {
+              onModify(values, productDetail._id)
             } else {
               onCreate(values)
-              form.resetFields()
             }
           })
           .catch((info) => {
@@ -58,63 +51,96 @@ const CreateForm = ({
           })
       }}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        name='form_in_modal'
-        initialValues={{
-          name: productName,
-          image_url: productImage,
-          expiration_date: moment(productExp)
-        }}
-      >
-        <Form.Item
-          name="name"
-          label="name"
-          rules={[
-            {
-              required: true,
-              message: '상품명을 등록해주세요!'
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="image_url"
-          label="image_url">
-          {
-            productImage && '기존 이미지:' &&
-            <ImgCustomize><img name="image_url" src={`uploads/${productImage}`} /></ImgCustomize>
+      {productDetail ?
+        <Form
+          form={form}
+          layout="vertical"
+          name='form_in_modal'
+          initialValues={
+            productDetail && {
+              name: productDetail.name,
+              image_url: productDetail.image_url,
+              expiration_date: moment(productDetail.expiration_date)
+            }
           }
-          <Input onChange={onUpload} type="file" id="img_url" />
-        </Form.Item>
-        <Form.Item
-          name="expiration_date"
-          label="expiration_date"
-          rules={[
-            {
-              required: true,
-              message: '날짜를 선택해주세요!'
-            },
-          ]}
         >
-          <DatePicker format={dateFormat} />
-          {/* {
-            productExp ?
-              <DatePicker
-                format={dateFormat}
-              />
-              : <DatePicker />
-          } */}
-
-        </Form.Item>
-      </Form>
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[
+              {
+                required: true,
+                message: '상품명을 등록해주세요!'
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="image_url"
+            label="Image"
+          >
+            {
+              productDetail.image_url &&
+              <ImgCustomize><img name="image_url" src={`uploads/${productDetail.image_url}`} /></ImgCustomize>
+            }
+            <Input onChange={onUpload} type="file" id="img_url" />
+          </Form.Item>
+          <Form.Item
+            name="expiration_date"
+            label="Expiration date"
+            rules={[
+              {
+                required: true,
+                message: '날짜를 선택해주세요!'
+              },
+            ]}
+          >
+            <DatePicker format={dateFormat} />
+          </Form.Item>
+        </Form>
+        :
+        <Form
+          form={form}
+          layout="vertical"
+          name='form_in_modal'
+        >
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[
+              {
+                required: true,
+                message: '상품명을 등록해주세요!'
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="image_url"
+            label="Image"
+          >
+            <Input onChange={onUpload} type="file" id="img_url" />
+          </Form.Item>
+          <Form.Item
+            name="expiration_date"
+            label="Expiration date"
+            rules={[
+              {
+                required: true,
+                message: '날짜를 선택해주세요!'
+              },
+            ]}
+          >
+            <DatePicker format={dateFormat} />
+          </Form.Item>
+        </Form>
+      }
     </Modal>
 
   )
+
 }
-
-
 
 export default CreateForm

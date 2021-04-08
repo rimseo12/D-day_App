@@ -23,24 +23,12 @@ function Search({ onChangekeyWord }) {
     localStorage.setItem(SEARCH_STORAGE_KEY, JSON.stringify(keyWords))
   }, [keyWords])
 
-  const handleSearch = (val) => {
-    if (val.trim() !== "") {
-      const newKeyWord = {
-        id: Date.now(),
-        text: val
-      }
-      setKeyWords([newKeyWord, ...keyWords])
-      onChangekeyWord(val)
-    } else {
-      onChangekeyWord(val)
-    }
-  }
-
   const handleGetKeyword = (e) => {
     debounce(() => {
       //로컬 저장소에 검색어 누적 저장 
       //빈값은 저장하지 않기
       let currentKeyWord = e.target.value
+
       if (e.key === ENTER_KEY_CODE) {
         if (currentKeyWord.trim() !== "") {
           const newKeyWord = {
@@ -48,7 +36,6 @@ function Search({ onChangekeyWord }) {
             text: currentKeyWord
           }
           setKeyWords([newKeyWord, ...keyWords])
-
           onChangekeyWord(currentKeyWord)
         } else {
           onChangekeyWord(currentKeyWord)
@@ -59,7 +46,6 @@ function Search({ onChangekeyWord }) {
 
   const handleQuickSearch = (text) => {
     onChangekeyWord(text)
-
   }
 
   //검색어 삭제
@@ -84,7 +70,6 @@ function Search({ onChangekeyWord }) {
           placeholder="Search here"
           enterButton
           onKeyUp={handleGetKeyword}
-          onSearch={handleSearch}
         />
       </InputSearch>
 

@@ -18,7 +18,7 @@ module.exports = function (app, Product) {
                 console.log(err);
                 res.status(500).end();
             }
-            res.json({ message: "success upload", data: req.file});
+            res.json({ message: "success upload", data: req.file });
         });
     });
 
@@ -27,7 +27,6 @@ module.exports = function (app, Product) {
         Product.find((err, products) => {
             if (err) return res.status(500).send({ error: err });
             res.json(products);
-            res.end();
         });
     });
 
@@ -37,7 +36,6 @@ module.exports = function (app, Product) {
             if (err) return res.status(500).json({ error: err });
             if (!product) return res.status(404).json({ error: "product not found" });
             res.json(product);
-            res.end();
         });
     });
 
@@ -57,7 +55,6 @@ module.exports = function (app, Product) {
                 return;
             }
             res.json(product);
-            res.end();
         });
     });
 
@@ -75,7 +72,6 @@ module.exports = function (app, Product) {
             product.save((err) => {
                 if (err) res.status(500).json({ error: "failed to update" });
                 res.json({ message: "product updated" });
-                res.end();
             });
         });
     });
@@ -85,7 +81,6 @@ module.exports = function (app, Product) {
         Product.deleteOne({ _id: req.params.product_id }, function (err) {
             if (err) return res.status(500).json({ error: "database failure " });
             res.json({ message: "product deleted" });
-            res.status(204).end();
         });
     });
 

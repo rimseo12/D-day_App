@@ -1,6 +1,6 @@
 import { Table, Button, message } from 'antd'
 import React, { useEffect, useState } from 'react'
-import { getProducts, deleteForever, deleteIndividual, moveToHome } from '../../../api/product'
+import { getProducts, deleteForever, deleteIndividual, moveToHome } from '../../api/product'
 import moment from 'moment'
 import styled from 'styled-components'
 
@@ -10,25 +10,24 @@ const HeaderContainer = styled.div`
   .ant-btn {
     align-self: flex-end;
   }
-`;
-
+`
 const ListWrapper = styled.div`
   display: flex;
-
   img {
     height: 100px;
   }
-`;
-
+  button {
+    margin: 30px;
+  }
+`
 const ProductInfo = styled.div`
   margin-left: 10px;
   align-self: center;
-  .product_name {
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-`;
-
+`
+const ProductName = styled.div`
+  margin-bottom: 5px;
+  font-weight: bold;
+`
 function TrashList() {
   const [trashList, setTrashList] = useState([])
   const [selectedRowKeys, setSelectedRowKeys] = useState([])
@@ -40,9 +39,15 @@ function TrashList() {
   }, [])
 
   const fetchProduct = async () => {
-    const productObject = await getProducts()
-    if (productObject.status === 200) {
-      setTrashList(productObject.data)
+    try {
+      const productObject = await getProducts()
+      if (productObject.status === 200) {
+        setTrashList(productObject.data)
+      } else {
+        throw new Error(`status code: ${productObject.status}`)
+      }
+    } catch (error) {
+      throw new Error(`서버 통신 중 에러 발생: ${error.message}`)
     }
   }
 
@@ -52,12 +57,12 @@ function TrashList() {
       render: item => {
         return (
           <ListWrapper>
-            { item.hasOwnProperty('image_url') ?
-              <img src={`uploads/${item.image_url}`} />
+            { item.hasOwnProperty('image_url')
+              ? <img src={`uploads/${item.image_url}`} />
               : <img src={'images/NoImage.png'} />
             }
             <ProductInfo>
-              <div className="product_name">{item.name}</div>
+              <ProductName>{item.name}</ProductName>
               <div>{moment(item.expiration_date).format(dateFormat)}</div>
             </ProductInfo>
             <Button
@@ -68,7 +73,6 @@ function TrashList() {
               Delete forever
             </Button>
           </ListWrapper>
-
         )
       }
     }
@@ -82,27 +86,50 @@ function TrashList() {
       } else {
         setChecked(true)
       }
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     }
   }
 
   const handleDeleteIndividual = async (e) => {
-    const product_id = e.target.parentNode.id
-    await deleteIndividual(product_id)
-    message.success('deleted forever')
-    fetchProduct()
+    const productId = e.target.parentNode.id
+    try {
+      const res = await deleteIndividual(productId)
+      if (res.status === 200) {
+        message.success('deleted forever')
+        fetchProduct()
+      } else {
+        throw new Error(`status code: ${res.status}`)
+      }
+    } catch (error) {
+      throw new Error(`서버 통신 중 에러 발생: ${error.message}`)
+    }
   }
 
   const handleDeleteForever = async () => {
-    await deleteForever(selectedRowKeys)
-    message.success('deleted forever')
-    fetchProduct()
+    try {
+      const res = await deleteForever(selectedRowKeys)
+      if (res.status === 200) {
+        message.success('deleted forever')
+        fetchProduct()
+      } else {
+        throw new Error(`status code: ${res.status}`)
+      }
+    } catch (error) {
+      throw new Error(`서버 통신 중 에러 발생: ${error.message}`)
+    }
   }
 
   const handleMoveToHome = async () => {
-    await moveToHome(selectedRowKeys)
-    message.info('moved to home')
-    fetchProduct()
+    try {
+      const res = await moveToHome(selectedRowKeys)
+      if (res.status === 200) {
+        message.info('moved to home')
+        fetchProduct()
+      } else {
+        throw new Error(`status code: ${res.status}`)
+      }
+    } catch (error) {
+      throw new Error(`서버 통신 중 에러 발생: ${error.message}`)
+    }
   }
 
   return (
