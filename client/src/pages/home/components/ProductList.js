@@ -41,9 +41,6 @@ function ProductList() {
   const [visibleCreate, setVisibleCreate] = useState(false)
   const [visibleModify, setVisibleModify] = useState(false)
   const [productId, setProductId] = useState(null)
-  const [productName, setProductName] = useState(null)
-  const [productImage, setProductImage] = useState(null)
-  const [productExp, setProductExp] = useState(null)
   const dateFormat = 'YYYY/MM/DD'
   let newList = []
 
