@@ -44,10 +44,11 @@ exp-tracker\client > npm start
 - /pages/home/components/
   - ModalLayout.js
   - ProductList.js
+  - SearchHistory.js
   - SearchInput.js
 - /pages/menu/
-  - LeftMenu.js
-- /pages/trash/components/Trash.js
+  - Menu.js
+- /pages/trash/Trash.js
 - /util/
   - debounce.js
 
