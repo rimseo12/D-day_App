@@ -3,5 +3,6 @@
     "tabWidth": 2,
     "singleQuote": true,
     "semi": false,
-    "printWidth": 300, // 줄 바꿈 할 폭 길이
+    "printWidth": 300, 
+    "endOfLine": "auto"
 }

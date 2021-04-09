@@ -14,7 +14,7 @@ export const postProduct = async (product_name, image, exp_date) => {
   return await axios.post(endPoint.productAdd, {
     name: product_name,
     image_url: image,
-    expiration_date: exp_date
+    expiration_date: exp_date,
   })
 }
 
@@ -22,13 +22,13 @@ export const modifyProduct = async (product_id, product_name, image, exp_date) =
   return await axios.put(`${endPoint.products}/${product_id}`, {
     name: product_name,
     image_url: image,
-    expiration_date: exp_date
+    expiration_date: exp_date,
   })
 }
 
 export const deleteProduct = async (product_id) => {
   return await axios.put(`${endPoint.products}/${product_id}`, {
-    status: "inactive"
+    status: 'inactive',
   })
 }
 
@@ -45,7 +45,7 @@ export const deleteIndividual = async (product_id) => {
 export const moveToHome = async (products) => {
   for (let id of products) {
     await axios.put(`${endPoint.products}/${id}`, {
-      status: "active"
+      status: 'active',
     })
   }
 }

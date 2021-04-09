@@ -9,17 +9,7 @@ const ImgCustomize = styled.div`
     height: 100px;
   }
 `
-function CreateForm({
-  title,
-  okText,
-  cancelText,
-  productDetail,
-  visible,
-  onCreate,
-  onCancel,
-  onUpload,
-  onModify
-}) {
+function CreateForm({ title, okText, cancelText, productDetail, visible, onCreate, onCancel, onUpload,onModify }) { 
   const [form] = Form.useForm()
   const dateFormat = 'YYYY/MM/DD'
   return (
@@ -51,17 +41,18 @@ function CreateForm({
           })
       }}
     >
-
       <Form
         form={form}
         layout="vertical"
-        name='form_in_modal'
+        name="form_in_modal"
         initialValues={
-          productDetail ? {
-            name: productDetail.name,
-            image_url: productDetail.image_url,
-            expiration_date: moment(productDetail.expiration_date)
-          } : {}
+          productDetail
+          ? {
+                name: productDetail.name,
+                image_url: productDetail.image_url,
+                expiration_date: moment(productDetail.expiration_date),
+            } 
+          : {}
         }
       >
         <Form.Item
@@ -70,22 +61,15 @@ function CreateForm({
           rules={[
             {
               required: true,
-              message: '상품명을 등록해주세요!'
+              message: '상품명을 등록해주세요!',
             },
           ]}
         >
           <Input />
         </Form.Item>
-        <Form.Item
-          name="image_url"
-          label="Image"
-        >
-          {
-            productDetail &&
-            productDetail.image_url &&
-            <ImgCustomize>
-              <img name="image_url" src={`uploads/${productDetail.image_url}`} />
-            </ImgCustomize>
+        <Form.Item name="image_url" label="Image">
+          {productDetail && productDetail.image_url &&
+           <ImgCustomize> <img name="image_url" src={`uploads/${productDetail.image_url}`} /> </ImgCustomize>
           }
           <Input onChange={onUpload} type="file" id="img_url" />
         </Form.Item>
@@ -95,16 +79,14 @@ function CreateForm({
           rules={[
             {
               required: true,
-              message: '날짜를 선택해주세요!'
+              message: '날짜를 선택해주세요!',
             },
           ]}
         >
           <DatePicker format={dateFormat} />
         </Form.Item>
       </Form>
-
     </Modal>
   )
 }
-
 export default CreateForm

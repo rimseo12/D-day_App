@@ -80,9 +80,6 @@ function Search({ onChangekeyWord }) {
         onClearKeywords={handleClearKeywords}
       />
     </Fragment>
-
   )
-
 }
-
 export default Search

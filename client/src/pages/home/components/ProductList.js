@@ -67,7 +67,7 @@ function ProductList() {
     try {
       const productObject = await getProducts()
       if (productObject.status === 200) {
-        setProductList(productObject.data.filter(item => item.status === "active"))
+        setProductList(productObject.data.filter((item) => item.status === 'active'))
       } else {
         throw new Error(`status code: ${productObject.status}`)
       }
@@ -78,14 +78,14 @@ function ProductList() {
 
   let image = null
   const handleUpload = (e) => {
-    if (e.target.id === "img_url") {
+    if (e.target.id === 'img_url') {
       fetchUpload(e.target.files[0])
     }
   }
 
   const fetchUpload = async (fileName) => {
     const formData = new FormData()
-    formData.append("imageName", fileName) //name === route/index.js single()함수 파라미터
+    formData.append('imageName', fileName) //name === route/index.js single()함수 파라미터
     try {
       image = await uploadProductImage(formData)
     } catch (error) {
@@ -143,21 +143,19 @@ function ProductList() {
   }
   return (
     <Fragment>
-      <Search
-        onChangekeyWord={handleSearch}
-      />
-      {isSearching &&
+      <Search onChangekeyWord={handleSearch} />
+      {isSearching && (
         <RefrashButton>
           <Button
             type="primary"
             onClick={() => {
-              window.location.replace("/")
+              window.location.replace('/')
             }}
           >
             Refresh
           </Button>
         </RefrashButton>
-      }
+      )}
       <CreateButton>
         <Button
           type="primary"
@@ -166,7 +164,7 @@ function ProductList() {
           }}
         >
           Add Product
-      </Button>
+        </Button>
       </CreateButton>
 
       <ModalLayout
@@ -187,10 +185,8 @@ function ProductList() {
         <List
           className="demo-loadmore-list"
           itemLayout="horizontal"
-          dataSource={
-            isSearching ? searchResult : productList
-          }
-          renderItem={item => (
+          dataSource={isSearching ? searchResult : productList}
+          renderItem={(item) => (
             <List.Item
               actions={[
                 <Fragment>
@@ -219,11 +215,12 @@ function ProductList() {
                       }}
                     />
                   }
-                </Fragment>
-                ,
+                </Fragment>,
                 <Popconfirm
                   title="Are you sure to delete this item?"
-                  onConfirm={() => { handleDeleteFromList(item._id) }}
+                  onConfirm={() => { 
+                    handleDeleteFromList(item._id) 
+                  }}
                   okText="Yes"
                   cancelText="No"
                 >
@@ -244,10 +241,7 @@ function ProductList() {
           )}
         />
       </ListCustomize>
-
-
     </Fragment>
   )
 }
-
 export default ProductList

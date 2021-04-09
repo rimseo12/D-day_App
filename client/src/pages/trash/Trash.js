@@ -163,5 +163,4 @@ function TrashList() {
     </div>
   )
 }
-
 export default TrashList
