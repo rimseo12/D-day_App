@@ -233,6 +233,8 @@ function ProductList() {
               <List.Item.Meta
                 avatar={
                   item.image_url
+                    ? <img alt={`${item.image_url}`} src={`uploads/${item.image_url}`} />
+                    : <img alt="noImage" src={'images/NoImage.png'} />
                 }
                 title={item.name}
                 description={moment(item.expiration_date).format(dateFormat)}
