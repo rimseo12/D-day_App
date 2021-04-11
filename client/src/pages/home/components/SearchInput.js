@@ -18,7 +18,7 @@ function Search({ onChangekeyWord }) {
     JSON.parse(localStorage.getItem(SEARCH_STORAGE_KEY)) || []
   )
 
-  //검색에 변화가 일어날때만 렌더링
+  //검색 변화 -> 렌더링
   useEffect(() => {
     localStorage.setItem(SEARCH_STORAGE_KEY, JSON.stringify(keyWords))
   }, [keyWords])

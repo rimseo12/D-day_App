@@ -9,7 +9,8 @@ import Search from './SearchInput'
 /*
 TODO LIST
 -알림 기능 구현 후에 이미지 태그 주석된 거 풀기
--D-day 별로 리스트에 아이콘 표시하기 
+-D-day 별로 리스트에 아이콘 표시하기
+-무한 스크롤링 구현하기 
 */
 
 const ListCustomize = styled(List)`
@@ -35,6 +36,7 @@ const CreateButton = styled.div`
   }
 `
 function ProductList() {
+  const baseUrl ="https://d-day-api.herokuapp.com"
   const [productList, setProductList] = useState([])
   const [searchResult, setSearchResult] = useState([])
   const [isSearching, setIsSearching] = useState(false)
@@ -231,8 +233,6 @@ function ProductList() {
               <List.Item.Meta
                 avatar={
                   item.image_url
-                    ? <img alt="logo" src={`uploads/${item.image_url}`} />
-                    : <img alt="noImage" src={'images/NoImage.png'} />
                 }
                 title={item.name}
                 description={moment(item.expiration_date).format(dateFormat)}

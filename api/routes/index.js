@@ -11,7 +11,7 @@ module.exports = function (app, Product) {
     storage: storage,
   }).single("imageName");
 
-  app.post("/upload", (req, res) => {
+  app.post('/upload', (req, res) => {
     upload(req, res, (err) => {
       if (err) {
         console.log(err);
