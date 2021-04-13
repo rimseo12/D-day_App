@@ -25,7 +25,7 @@ D-day는 상품을 등록하여 물건/음식 유통기한 알림 서비스입�
 해당 소스가 의존하고 있는 모듈을 아래 명령어로 설치합니다.
 ```sh
 cd client
-exp-tracker\client > npm install
+exp-tracker\client > npm install node
 ```
 서버를 구동하는 명령어입니다.
 ```sh
