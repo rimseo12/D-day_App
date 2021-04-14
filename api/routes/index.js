@@ -39,7 +39,7 @@ module.exports = function (app, Product) {
   });
 
   // CREATE SINGLE PRODUCT
-  app.post('/product/add', (req, res) => {
+  app.post('/products', (req, res) => {
     let product = new Product({
       name: req.body.name,
       image_url: req.body.image_url,
