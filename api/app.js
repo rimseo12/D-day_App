@@ -6,10 +6,14 @@ const app = express();
 const bodyparser = require('body-parser');
 const mongoose = require('mongoose');
 
+const cors = require('cors');
+app.use(cors()); //브라우저 cors 허용
+//app.use(cors({ origin: "https://d-day.netlify.app"}));
+
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
 
-app.use(express.static("public"));
+app.use(express.static(__dirname + "/public"));
 
 const port = process.env.PORT || 8080;
 const server = app.listen(port, function() {
@@ -26,6 +30,3 @@ mongoose
 
 const Product = require('./models/products');
 const router = require('./routes')(app, Product);
-
-const cors = require('cors');
-app.use(cors()); //브라우저 cors 허용

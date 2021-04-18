@@ -7,7 +7,7 @@ export const getProducts = async () => {
 
 export const uploadProductImage = async (formData) => {
   const res = await axios.post(endPoint.upload, formData, configForUploadImg)
-  return res.data.data.filename
+  return res
 }
 
 export const postProduct = async (product_name, image, exp_date) => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Fragment } from 'react'
 import { Button, Popconfirm, message, List } from 'antd'
 import styled from 'styled-components'
-import { getProducts, uploadProductImage, postProduct, modifyProduct, deleteProduct } from '../../../api/product'
+import { getProducts, uploadProductImage, postProduct, modifyProduct, deleteProduct } from 'api/product'
 import ModalLayout from './ModalLayout'
 import moment from 'moment'
 import Search from './SearchInput'
@@ -10,7 +10,6 @@ import Search from './SearchInput'
 TODO LIST
 -알림 기능 구현 후에 이미지 태그 주석된 거 풀기
 -D-day 별로 리스트에 아이콘 표시하기
--무한 스크롤링 구현하기 
 */
 
 const ListCustomize = styled(List)`
@@ -36,13 +35,13 @@ const CreateButton = styled.div`
   }
 `
 function ProductList() {
-  const baseUrl ="https://d-day-api.herokuapp.com"
   const [productList, setProductList] = useState([])
   const [searchResult, setSearchResult] = useState([])
   const [isSearching, setIsSearching] = useState(false)
   const [visibleCreate, setVisibleCreate] = useState(false)
   const [visibleModify, setVisibleModify] = useState(false)
   const [productId, setProductId] = useState(null)
+  const [productImg, setProductImg] = useState(null)
   const dateFormat = 'YYYY/MM/DD'
   let newList = []
 
@@ -80,7 +79,7 @@ function ProductList() {
 
   let image = null
   const handleUpload = (e) => {
-    if (e.target.id === 'img_url') {
+    if (e.target.id === 'form_in_modal_image_url') {
       fetchUpload(e.target.files[0])
     }
   }
@@ -89,18 +88,21 @@ function ProductList() {
     const formData = new FormData()
     formData.append('imageName', fileName) //name === route/index.js single()함수 파라미터
     try {
-      image = await uploadProductImage(formData)
+      const res = await uploadProductImage(formData)
+      if(res.status === 200) { 
+        console.log(res)
+        setProductImg(res.data.signedRequest.location) 
+      }
     } catch (error) {
       throw new Error(`서버 통신 중 에러 발생: ${error.message}`)
     }
   }
 
-  //등록하기
   const handleCreate = async (values) => {
     let productName = values.name
     let expDate = moment.utc(values.expiration_date)
     try {
-      const res = await postProduct(productName, image, expDate)
+      const res = await postProduct(productName, productImg, expDate)
       if (res.status === 200) {
         setVisibleCreate(false)
         fetchProduct()
@@ -112,12 +114,11 @@ function ProductList() {
     }
   }
 
-  //수정하기
   const handleModify = async (values, product_id) => {
     let productName = values.name
     let expDate = moment.utc(values.expiration_date)
     try {
-      const res = await modifyProduct(product_id, productName, image, expDate)
+      const res = await modifyProduct(product_id, productName, productImg, expDate)
       if (res.status === 200) {
         setVisibleModify(false)
         fetchProduct()
@@ -129,7 +130,6 @@ function ProductList() {
     }
   }
 
-  //삭제하기
   const handleDeleteFromList = async (product_id) => {
     try {
       const res = await deleteProduct(product_id)
@@ -233,8 +233,8 @@ function ProductList() {
               <List.Item.Meta
                 avatar={
                   item.image_url
-                    ? <img alt={`${item.image_url}`} src={`uploads/${item.image_url}`} />
-                    : <img alt="noImage" src={'images/NoImage.png'} />
+                    ? <img alt={`${item.image_url}`} src={`${item.image_url}`} />
+                    : <img alt="noImage" src={'/images/NoImage.png'} />
                 }
                 title={item.name}
                 description={moment(item.expiration_date).format(dateFormat)}

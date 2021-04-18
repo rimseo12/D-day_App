@@ -1,24 +1,34 @@
 module.exports = function (app, Product) {
   const multer = require("multer");
-  const storage = multer.diskStorage({
-    destination: "./public/uploads/",
-    filename: function (req, file, cb) {
+  const multerS3 = require('multer-s3');
+  const AWS = require("aws-sdk");
+
+  const s3bucket = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_REGION
+  });
+
+  const upload = multer({
+    storage: multerS3({
+      s3: s3bucket,
+      bucket: process.env.S3_BUCKET_NAME,
+      key: function(req, file, cb){
         const fileName = file.originalname.toLowerCase().split(" ").join("-");
         cb(null, Date.now() + "-" + fileName);
-    },
+      },
+      acl: "public-read"
+    })
   });
-  const upload = multer({
-    storage: storage,
-  }).single("imageName");
 
-  app.post('/upload', (req, res) => {
-    upload(req, res, (err) => {
-      if (err) {
-        console.log(err);
-        res.status(500).end();
-      }
-        res.json({ message: "success upload", data: req.file });
-    });
+  app.post('/upload', upload.single("imageName"), (req, res, next) => {
+    console.log(req.file)
+    const returnData = {
+      signedRequest: req.file,
+      url: `https://${s3bucket}.s3.amazonaws.com/${req.file.location}`
+    }
+    res.write(JSON.stringify(returnData));
+    res.end();
   });
 
   // GET ALL PRODUCTS

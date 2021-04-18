@@ -9,7 +9,7 @@ const ImgCustomize = styled.div`
     height: 100px;
   }
 `
-function CreateForm({ title, okText, cancelText, productDetail, visible, onCreate, onCancel, onUpload,onModify }) { 
+function CreateForm({ title, okText, cancelText, productDetail, visible, onCreate, onCancel, onUpload, onModify }) { 
   const [form] = Form.useForm()
   const dateFormat = 'YYYY/MM/DD'
   return (
@@ -67,11 +67,11 @@ function CreateForm({ title, okText, cancelText, productDetail, visible, onCreat
         >
           <Input />
         </Form.Item>
-        <Form.Item name="image_url" label="Image">
+        <Form.Item name="image_url" label="Image" validateStatus="validating">
           {productDetail && productDetail.image_url &&
-           <ImgCustomize> <img name="image_url" src={`uploads/${productDetail.image_url}`} /> </ImgCustomize>
+           <ImgCustomize> <img src={`${productDetail.image_url}`} /> </ImgCustomize>
           }
-          <Input onChange={onUpload} type="file" id="img_url" />
+          <Input type="file" id="form_in_modal_image_url" onChange={onUpload} />
         </Form.Item>
         <Form.Item
           name="expiration_date"

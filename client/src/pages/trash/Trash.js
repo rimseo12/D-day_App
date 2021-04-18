@@ -1,6 +1,6 @@
 import { Table, Button, message } from 'antd'
 import React, { useEffect, useState } from 'react'
-import { getProducts, deleteForever, deleteIndividual, moveToHome } from '../../api/product'
+import { getProducts, deleteForever, deleteIndividual, moveToHome } from 'api/product'
 import moment from 'moment'
 import styled from 'styled-components'
 
