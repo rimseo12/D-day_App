@@ -36,7 +36,7 @@ module.exports = function (app, Product) {
     Product.find((err, products) => {
       if (err) return res.status(500).send({ error: err });
       res.json(products);
-    });
+    }).sort({"expiration_date": 1});
   });
 
   // GET SINGLE PRODUCT
