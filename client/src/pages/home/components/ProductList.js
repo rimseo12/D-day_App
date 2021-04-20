@@ -5,6 +5,7 @@ import { getProducts, uploadProductImage, postProduct, modifyProduct, deleteProd
 import ModalLayout from './ModalLayout'
 import moment from 'moment'
 import Search from './SearchInput'
+import { baseUrl } from 'api/config'
 
 /*
 TODO LIST
@@ -234,7 +235,7 @@ function ProductList() {
                 avatar={
                   item.image_url
                     ? <img alt={`${item.image_url}`} src={`${item.image_url}`} />
-                    : <img alt="noImage" src={'/images/NoImage.png'} />
+                    : <img alt="noImage" src={`${baseUrl}/images/NoImage.png`} />
                 }
                 title={item.name}
                 description={moment(item.expiration_date).format(dateFormat)}

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { getProducts, deleteForever, deleteIndividual, moveToHome } from 'api/product'
 import moment from 'moment'
 import styled from 'styled-components'
+import { baseUrl } from 'api/config'
 
 const HeaderContainer = styled.div`
   margin-bottom: 16px;
@@ -58,8 +59,8 @@ function TrashList() {
         return (
           <ListWrapper>
             { item.hasOwnProperty('image_url')
-              ? <img src={`uploads/${item.image_url}`} />
-              : <img src={'images/NoImage.png'} />
+              ? <img src={`${item.image_url}`} />
+              : <img src={`${baseUrl}/images/NoImage.png`} />
             }
             <ProductInfo>
               <ProductName>{item.name}</ProductName>

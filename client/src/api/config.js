@@ -1,7 +1,8 @@
+export const baseUrl = 'https://d-day-api.herokuapp.com'
 export const endPoint = {
-  products: '/products',
-  product: '/product',
-  upload: '/upload',
+  products: `${baseUrl}/products`,
+  product: `${baseUrl}/product`,
+  upload: `${baseUrl}/upload`,
 }
 export const configForUploadImg = {
   headers: {
