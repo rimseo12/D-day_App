@@ -7,8 +7,6 @@
 
 ## 프로젝트 설명
 
-<img src = "https://user-images.githubusercontent.com/52188882/114333716-eb8f7300-9b83-11eb-96b8-67bc5db40a3f.png" height="350px">
-
 D-day는 상품을 등록하여 물건/음식 유통기한 알림 서비스입니다.
 - 상품 리스트를 조회 할 수 있다.
 - 상품 리스트를 상품명으로 검색 할 수 있다.
