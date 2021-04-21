@@ -54,7 +54,9 @@ module.exports = function (app, Product) {
       name: req.body.name,
       image_url: req.body.image_url,
       expiration_date: req.body.expiration_date,
-      status: "active"
+      memo: req.body.memo,
+      status: "active",
+      created_date: req.body.created_date,
     });
     product.save((err) => {
       if (err) {
@@ -75,7 +77,9 @@ module.exports = function (app, Product) {
       if (req.body.name) product.name = req.body.name;
       if (req.body.image_url) product.image_url = req.body.image_url;
       if (req.body.expiration_date) product.expiration_date = req.body.expiration_date;
+      if (req.body.memo) product.memo = req.body.memo;
       if (req.body.status) product.status = req.body.status;
+      if (req.body.created_date) product.created_date = req.body.created_date;
 
       product.save((err) => {
         if (err) res.status(500).json({ error: "failed to update" });
