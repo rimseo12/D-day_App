@@ -1,8 +1,0 @@
-{
-    "indent": 2,
-    "tabWidth": 2,
-    "singleQuote": true,
-    "semi": false,
-    "printWidth": 300, 
-    "endOfLine": "auto"
-}
